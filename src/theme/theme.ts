@@ -1,4 +1,4 @@
 export interface Theme {
-  colors: Record<string, string | Record<number, string>>;
+  colors: Record<string, Record<number, string>>;
   extend?: Partial<Theme>;
 }
