@@ -1,9 +1,2 @@
-import * as React from 'react';
-
-interface Props {
-  text: string;
-}
-
-export const ExampleComponent = ({ text }: Props) => {
-  return <div>Example Component: {text}</div>;
-};
+export * from './contexts/theme/theme-context';
+export * from './hooks/use-theme/use-theme';

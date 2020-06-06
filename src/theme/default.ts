@@ -1,6 +1,6 @@
 import { Theme } from './theme';
 
-export const DefaultTheme: Theme = {
+export const DEFAULT_THEME: Theme = {
   colors: {
     transparent: 'transparent',
     current: 'currentColor',

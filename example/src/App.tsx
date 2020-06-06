@@ -1,9 +1,10 @@
 import React from 'react';
-
-import { ExampleComponent } from 'styled-tw';
+import { useTheme } from 'styled-tw';
 
 const App = () => {
-  return <ExampleComponent text='Create React Library Example 😄' />;
+  const theme = useTheme();
+
+  return <pre>{JSON.stringify(theme, null, 2)}</pre>;
 };
 
 export default App;
