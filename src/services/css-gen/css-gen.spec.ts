@@ -25,4 +25,10 @@ describe('CSSGen', () => {
 
     expect(css).toMatchSnapshot();
   });
+
+  it('should generate css for classes like `mt-10`', () => {
+    const css = cssGen.genCSS(['bg-red-500']);
+
+    expect(css).toMatchSnapshot();
+  });
 });

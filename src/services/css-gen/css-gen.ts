@@ -1,6 +1,8 @@
 import last from 'lodash/last';
 
 export class CSSGen {
+  // stores the theme config object
+  private config: any;
   // classes which need no regex matching
   private staticClasses = {
     clearfix: `content: "";
@@ -22,9 +24,11 @@ export class CSSGen {
     'box-content': 'box-sizing: content-box'
   };
 
-  private propertyValueClasses = [/float-(.*)/, /overflow-(.*)/];
+  private staticPropertyClasses = [/float-(.*)/, /overflow-(.*)/];
+
   private dynamicPropertyClasses = [/m(.)?-(.*)/, /p(.)?-(.*)/];
-  private config: any;
+
+  private semiPropertyDynamicClasses = [/bg-(.*)/];
 
   constructor(config: any) {
     this.config = config;
@@ -43,7 +47,7 @@ export class CSSGen {
   // overflow-x-hidden => overflow-x: hidden;
   private hydratePropertyValueClasess(classes: string[]) {
     const hydratedCSS = classes.map((className) => {
-      const propertyValueClass = this.propertyValueClasses.find(
+      const propertyValueClass = this.staticPropertyClasses.find(
         (propertyValueClass) => propertyValueClass.test(className)
       );
 
@@ -105,6 +109,32 @@ export class CSSGen {
     return hydratedCSS;
   }
 
+  // classes like bg-red, bg-green
+  private hydrateSemiPropertyDynamicClasses(classes: string[]) {
+    const hydratedCSS = classes.map((className) => {
+      const semiPropertyDynamicClass = this.semiPropertyDynamicClasses.find(
+        (semiPropertyDynamicClass) => semiPropertyDynamicClass.test(className)
+      );
+
+      if (semiPropertyDynamicClass) {
+        if (className.startsWith('bg-')) {
+          // color => red-500;
+          const [, color] = className.match(semiPropertyDynamicClass);
+          const [colorName, contrast] = color.split('-');
+          const themeColor = this.config.theme.colors[colorName][contrast];
+
+          return `background: ${themeColor};`;
+        } else {
+          return className;
+        }
+      } else {
+        return className;
+      }
+    });
+
+    return hydratedCSS;
+  }
+
   private getDirectionString(direction: string) {
     switch (direction) {
       case 't':
@@ -128,7 +158,10 @@ export class CSSGen {
     const withDyanmicValueClasses = this.hydrateDynamicPropertyClasses(
       withPropertyValueClasses
     );
+    const withSemiDynamicClasses = this.hydrateSemiPropertyDynamicClasses(
+      withDyanmicValueClasses
+    );
 
-    return withDyanmicValueClasses.join('');
+    return withSemiDynamicClasses.join('');
   }
 }
