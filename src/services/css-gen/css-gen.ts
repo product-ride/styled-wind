@@ -94,7 +94,11 @@ export class CSSGen {
 
             return `padding${directionString}: ${themeValue};`;
           }
+          default:
+            return className;
         }
+      } else {
+        return className;
       }
     });
 
