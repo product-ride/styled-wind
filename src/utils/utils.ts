@@ -1,4 +1,3 @@
-import { Theme } from '../theme/theme';
 import { name } from '../../package.json';
 
 export function warn(message: string) {
@@ -10,15 +9,26 @@ export function warn(message: string) {
   }
 }
 
-export function getColor(theme: Theme, colorName: string) {
-  const [color, contrast] = colorName.split('-');
-  const colorObj = theme.colors[color];
+export function hydrateWithCSS(
+  string: string,
+  styleSheet: Record<string, string>
+) {
+  const styles = string.split(';').map((style) => style.trim());
+  let hydratedStyles = ``;
 
-  if (!colorObj || !colorObj[contrast]) {
-    warn(`no color found with name ${colorName} in theme`);
+  for (const style of styles) {
+    if (style.startsWith('.')) {
+      const hydratedStyle = styleSheet[style.substr(1)];
 
-    return '';
+      if (hydratedStyle) {
+        hydratedStyles = `${hydratedStyles}${hydratedStyle};`;
+      } else {
+        warn(`unknown class ${style}`);
+      }
+    } else if (style.length > 0) {
+      hydratedStyles = `${hydratedStyles}${style};`;
+    }
   }
 
-  return theme.colors[color][contrast];
+  return hydratedStyles;
 }

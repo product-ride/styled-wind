@@ -1,5 +1,4 @@
-import { DEFAULT_THEME } from '../theme/default';
-import { warn, getColor } from './utils';
+import { warn, hydrateWithCSS } from './utils';
 import { name } from '../../package.json';
 
 describe('Utils', () => {
@@ -19,13 +18,21 @@ describe('Utils', () => {
     });
   });
 
-  describe('getColor()', () => {
-    it('should return the color hex value from theme', () => {
-      const red900Hex = DEFAULT_THEME.colors.red['900'];
+  describe('hydrateWithCSS()', () => {
+    it('should replace classes with css styles', () => {
+      const styled = `
+      .bg-red;
+      .text-color-green;
+      border: 1px solid red;
+      `;
+      const styleSheet = {
+        'bg-red': 'background: red',
+        'text-color-green': 'color: green'
+      };
 
-      const colorHex = getColor(DEFAULT_THEME, 'red-900');
+      const css = hydrateWithCSS(styled, styleSheet);
 
-      expect(colorHex).toBe(red900Hex);
+      expect(css).toBe('background: red;color: green;border: 1px solid red;');
     });
   });
 });

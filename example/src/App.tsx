@@ -1,10 +1,18 @@
 import React from 'react';
-import { useTheme } from 'styled-tw';
+import styled from 'styled-tw';
+
+const Container = styled.div`
+                  .bg-red;
+                  .p-50;
+                  .anamalada;
+                  border-radius: 20px;
+                  `;
+const Banner = styled(Container)`
+                       .text-color-green;
+                      `;
 
 const App = () => {
-  const theme = useTheme();
-
-  return <pre>{JSON.stringify(theme, null, 2)}</pre>;
+  return <Banner>hello</Banner>;
 };
 
 export default App;

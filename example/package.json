@@ -20,8 +20,9 @@
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "file:../node_modules/react-scripts",
-    "typescript": "file:../node_modules/typescript",
-    "styled-tw": "file:.."
+    "styled-components": "^5.1.1",
+    "styled-tw": "file:..",
+    "typescript": "file:../node_modules/typescript"
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3"
