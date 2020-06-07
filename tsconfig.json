@@ -23,7 +23,8 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "downlevelIteration": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "example"]

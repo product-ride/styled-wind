@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CSSGen should generate css for classes like \`clearfix\` 1`] = `""`;
+
+exports[`CSSGen should generate css for classes like \`float-right\` 1`] = `""`;
+
+exports[`CSSGen should generate css for classes like \`mt-10\` 1`] = `"margin-top: 1.25rem;margin: 0;padding-top: 0.25rem;padding: 0;"`;
