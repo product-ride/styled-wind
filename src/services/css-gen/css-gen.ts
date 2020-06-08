@@ -83,8 +83,7 @@ export class CSSGen {
           case 'm': {
             const [, direction, value] = className.match(dyanmicPopertyClass);
 
-            // TODO: not sure how to use this.config.theme.spacing
-            const themeValue = this.config.theme.spacing[value];
+            const themeValue = this.config.theme.margin[value];
             const directionString = this.getDirectionString(direction);
 
             return `margin${directionString}: ${themeValue};`;

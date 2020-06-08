@@ -1,11 +1,11 @@
 import { CSSGen } from './css-gen';
-import { defaultConfig } from '../../utils/defaultConfig';
+import generateStylesJS from '../../utils/generateStylesJS';
 
 describe('CSSGen', () => {
   let cssGen: CSSGen;
 
   beforeEach(() => {
-    cssGen = new CSSGen(defaultConfig);
+    cssGen = new CSSGen(generateStylesJS({}));
   });
 
   it('should generate css for classes like `clearfix`', () => {
