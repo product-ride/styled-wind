@@ -31,4 +31,10 @@ describe('CSSGen', () => {
 
     expect(css).toMatchSnapshot();
   });
+
+  it('should generate css for scale classes', () => {
+    const css = cssGen.genCSS(['scale-25', 'scale-x-100']);
+
+    expect(css).toMatchSnapshot();
+  });
 });
