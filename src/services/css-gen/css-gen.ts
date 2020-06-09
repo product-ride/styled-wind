@@ -108,7 +108,8 @@ export class CSSGen {
     /p(.)?-(.*)/,
     /scale-(.*)/,
     /border-[0-9]/,
-    /border-(.*)-[0-9]/
+    /border-(.*)-[0-9]/,
+    /text-(.*)/
   ];
 
   private semiPropertyDynamicClasses = [/bg-(.*)/];
@@ -217,6 +218,25 @@ export class CSSGen {
                 const directionExpanded = this.expandDirectionChar(direction);
 
                 return `border${directionExpanded}-width: ${value};`;
+              }
+            } else if (className.startsWith('text')) {
+              const props = className.split('-');
+
+              // text-black, text-trasparent
+              if (props.length === 2) {
+                const [, colorString] = props;
+                const colorHex = this.config.theme.colors[colorString];
+
+                return `color: ${colorHex};`;
+              }
+              // border-t-10 or border-b-100
+              else if (props.length === 3) {
+                const [, colorString, contrast] = props;
+                const colorHex = this.config.theme.colors[colorString][
+                  contrast
+                ];
+
+                return `color: ${colorHex};`;
               }
             }
 
