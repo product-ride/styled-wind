@@ -20,8 +20,56 @@ export class CSSGen {
     truncate: `overflow: hidden;
                  text-overflow: ellipsis;
                  white-space: nowrap;`,
-    'box-border': 'box-sizing: border-box',
-    'box-content': 'box-sizing: content-box'
+    'box-border': 'box-sizing: border-box;',
+    'box-content': 'box-sizing: content-box;',
+    hidden: 'display: hidden;',
+    block: 'diplay: block;',
+    inline: 'display: inline;',
+    'inline-block': 'display: inline-block;',
+    flex: 'display: flex;',
+    'inline-flex': 'display: inline-flex',
+    table: 'display: table-cell;',
+    'table-column': 'display: table-column;',
+    'table-column-group': 'display: table-column-group;',
+    'table-footer-group': 'display: table-footer-group;',
+    'table-header-group': 'display: table-header-group;',
+    'table-row-group': 'display: table-row-group;',
+    'table-row': 'display: table-row;',
+    'flow-root': 'display: flow-root;',
+    grid: 'display: grid;',
+    static: 'position: static;',
+    fixed: 'position: fixed;',
+    absolute: 'position: absolute;',
+    relative: 'position: relative;',
+    sticky: 'position: sticky;',
+    visible: 'visibility: visible;',
+    invisible: 'visibility: invisible;',
+    italic: 'font-style: italic;',
+    'non-italic': 'font-style: normal;',
+    underline: 'text-decoration: underline;',
+    'line-through': 'text-decoration: line-through;',
+    'no-underline': 'text-decoration: none;',
+    uppercase: 'text-transform: uppercase;',
+    lowercase: 'text-transform: lowercase;',
+    capitalize: 'text-transform: capitalize;',
+    'normal-case': 'text-transform: none;',
+    'sr-only': `position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;`,
+    'not-sr-only': `position: static;
+                    width: auto;
+                    height: auto;
+                    padding: 0;
+                    margin: 0;
+                    overflow: visible;
+                    clip: auto;
+                    white-space: normal;`
   };
 
   private staticPropertyClasses = [/float-(.*)/, /overflow-(.*)/];
