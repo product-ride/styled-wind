@@ -23,8 +23,6 @@ const getHydratedTemplateString = (
         }, '')
       : hydratedStrings[0];
 
-  console.log(hydratedTemplateString);
-
   return hydratedTemplateString;
 };
 
