@@ -1,14 +1,13 @@
 import React from 'react';
-import styled from 'styled-tw';
+import { styledWrapper } from 'styled-tw';
 
-const Container = styled.div`
-                  .bg-red;
+const Container = styledWrapper.div`
+                  .bg-red-600;
                   .p-50;
-                  .anamalada;
-                  border-radius: 20px;
+                  border: 20;
                   `;
-const Banner = styled(Container)`
-                       .text-color-green;
+const Banner = styledWrapper(Container)`
+                       .text-yellow-200;
                       `;
 
 const App = () => {

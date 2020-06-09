@@ -1,24 +1,25 @@
 import { DOMElement, domElements } from '../utils/dom-elements';
-import { hydrateWithCSS } from '../utils/utils';
 import styled, { AnyStyledComponent } from 'styled-components';
-import styles from '../styles.json';
+import { CSSGen } from '../services/css-gen/css-gen';
+import generateStylesJS from '../utils/generateStylesJS';
 
 type StyledFn = (
   strings: TemplateStringsArray,
   ...expressions: string[]
 ) => string;
 
+const config = generateStylesJS({});
+const cssGen = new CSSGen(config);
+
 const getHydratedTemplateString = (
   strings: TemplateStringsArray,
   ...expressions: string[]
 ) => {
-  const hydratedStrings = strings.map((string) =>
-    hydrateWithCSS(string, styles)
-  );
+  const hydratedStrings = cssGen.genCSS([...strings]);
 
   const hydratedTemplateString =
     hydratedStrings.length > 0
-      ? hydratedStrings.reduce((prev, cur, index) => {
+      ? hydratedStrings.reduce((prev: string, cur: string, index: number) => {
           return `${prev}${cur}${expressions[index] || ''}`;
         }, '')
       : hydratedStrings[0];
