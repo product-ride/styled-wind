@@ -72,7 +72,12 @@ export class CSSGen {
                     white-space: normal;`
   };
 
-  private staticPropertyClasses = [/float-(.*)/, /overflow-(.*)/];
+  private staticPropertyClasses = [
+    /float-(.*)/,
+    /overflow-(.*)/,
+    /appearance-(.*)/,
+    /pointer-events-(.*)/
+  ];
 
   private dynamicPropertyClasses = [/m(.)?-(.*)/, /p(.)?-(.*)/];
 
