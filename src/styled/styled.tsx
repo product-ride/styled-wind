@@ -15,7 +15,15 @@ const getHydratedTemplateString = (
   strings: TemplateStringsArray,
   ...expressions: string[]
 ) => {
-  const hydratedStrings = cssGen.genCSS([...strings]);
+  const hydratedStrings = cssGen.genCSS(
+    strings.map((string) => {
+      if (string && string.trim().startsWith('.')) {
+        return string.trim().substr(1);
+      }
+      return string.trim();
+    })
+  );
+  console.log(hydratedStrings);
 
   const hydratedTemplateString =
     hydratedStrings.length > 0
