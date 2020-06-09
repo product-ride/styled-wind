@@ -69,17 +69,41 @@ export class CSSGen {
                     margin: 0;
                     overflow: visible;
                     clip: auto;
-                    white-space: normal;`
+                    white-space: normal;`,
+    'inset-0': `top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;`,
+    'inset-y-0': `top: 0;
+                  bottom: 0`,
+    'inset-x-0': `right: 0;
+                  left: 0;`,
+    'inset-auto': `	top: auto;
+                    right: auto;
+                    bottom: auto;
+                    left: auto;`,
+    'inset-x-auto': `right: auto;
+                     left: auto;`,
+    'inset-y-auto': `top: auto;
+                     bottom: auto;`,
+    'flex-shrink': `flex-shrink: 1;`,
+    'flex-shrink-0': `flex-shrink: 0;`,
+    'flex-grow': `flex-grow: 1;`,
+    'flex-grow-0': `flex-shrink: 0;`
   };
 
   private staticPropertyClasses = [
     /float-(.*)/,
     /overflow-(.*)/,
     /appearance-(.*)/,
-    /pointer-events-(.*)/
+    /pointer-events-(.*)/,
+    /top-(.*)/,
+    /bottom-(.*)/,
+    /right-(.*)/,
+    /left-(.*)/
   ];
 
-  private dynamicPropertyClasses = [/m(.)?-(.*)/, /p(.)?-(.*)/];
+  private dynamicPropertyClasses = [/m(.)?-(.*)/, /p(.)?-(.*)/, /scale-(.*)/];
 
   private semiPropertyDynamicClasses = [/bg-(.*)/];
 
@@ -150,8 +174,30 @@ export class CSSGen {
 
             return `padding${directionString}: ${themeValue};`;
           }
-          default:
+          default: {
+            // scale
+            if (className.startsWith('scale')) {
+              const props = className.split('-');
+
+              // scale-10
+              if (props.length === 2) {
+                const [, valueString] = props;
+                const value = parseInt(valueString) / 100;
+
+                return `--transform-scale-x: ${value};
+                        --transform-scale-y: ${value};`;
+              }
+              // scale-x-0 or scale-y-100
+              else if (props.length === 3) {
+                const [, axis, valueString] = props;
+                const value = parseInt(valueString) / 100;
+
+                return `--transform-scale-${axis}: ${value};`;
+              }
+            }
+
             return className;
+          }
         }
       } else {
         return className;

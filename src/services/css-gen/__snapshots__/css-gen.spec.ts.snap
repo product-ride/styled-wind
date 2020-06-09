@@ -12,3 +12,8 @@ exports[`CSSGen should generate css for classes like \`float-right\` 1`] = `"flo
 exports[`CSSGen should generate css for classes like \`mt-10\` 1`] = `"margin-top: 1.25rem;margin: 0;padding-top: 0.25rem;padding: 0;"`;
 
 exports[`CSSGen should generate css for classes like \`mt-10\` 2`] = `"background: #f56565;"`;
+
+exports[`CSSGen should generate css for scale classes 1`] = `
+"--transform-scale-x: 0.25;
+                        --transform-scale-y: 0.25;--transform-scale-x: 1;"
+`;
