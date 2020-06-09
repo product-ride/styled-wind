@@ -103,7 +103,13 @@ export class CSSGen {
     /left-(.*)/
   ];
 
-  private dynamicPropertyClasses = [/m(.)?-(.*)/, /p(.)?-(.*)/, /scale-(.*)/];
+  private dynamicPropertyClasses = [
+    /m(.)?-(.*)/,
+    /p(.)?-(.*)/,
+    /scale-(.*)/,
+    /border-[0-9]/,
+    /border-(.*)-[0-9]/
+  ];
 
   private semiPropertyDynamicClasses = [/bg-(.*)/];
 
@@ -161,7 +167,7 @@ export class CSSGen {
             const [, direction, value] = className.match(dyanmicPopertyClass);
 
             const themeValue = this.config.theme.margin[value];
-            const directionString = this.getDirectionString(direction);
+            const directionString = this.expandDirectionChar(direction);
 
             return `margin${directionString}: ${themeValue};`;
           }
@@ -170,7 +176,7 @@ export class CSSGen {
 
             // TODO: not sure how to use this.config.theme.spacing
             const themeValue = this.config.theme.spacing[value];
-            const directionString = this.getDirectionString(direction);
+            const directionString = this.expandDirectionChar(direction);
 
             return `padding${directionString}: ${themeValue};`;
           }
@@ -193,6 +199,24 @@ export class CSSGen {
                 const value = parseInt(valueString) / 100;
 
                 return `--transform-scale-${axis}: ${value};`;
+              }
+            } else if (className.startsWith('border')) {
+              const props = className.split('-');
+
+              // border-10
+              if (props.length === 2) {
+                const [, valueString] = props;
+                const value = `${parseInt(valueString)}px`;
+
+                return `border-width: ${value};`;
+              }
+              // border-t-10 or border-b-100
+              else if (props.length === 3) {
+                const [, direction, valueString] = props;
+                const value = `${parseInt(valueString)}px`;
+                const directionExpanded = this.expandDirectionChar(direction);
+
+                return `border${directionExpanded}-width: ${value};`;
               }
             }
 
@@ -233,7 +257,7 @@ export class CSSGen {
     return hydratedCSS;
   }
 
-  private getDirectionString(direction: string) {
+  private expandDirectionChar(direction: string) {
     switch (direction) {
       case 't':
         return '-top';
