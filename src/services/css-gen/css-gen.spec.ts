@@ -37,4 +37,10 @@ describe('CSSGen', () => {
 
     expect(css).toMatchSnapshot();
   });
+
+  it('should generate css for scale border-width', () => {
+    const css = cssGen.genCSS(['border-0', 'border-t-5']);
+
+    expect(css).toMatchSnapshot();
+  });
 });
