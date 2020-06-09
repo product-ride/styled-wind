@@ -3,11 +3,11 @@ import { styledWrapper } from 'styled-tw';
 
 const Container = styledWrapper.div`
                   .bg-red-600;
-                  .p-50;
-                  border: 20;
+                  .p-10;
+                  border-radius: 10px;
                   `;
 const Banner = styledWrapper(Container)`
-                       .text-yellow-200;
+                       .text-green-900;
                       `;
 
 const App = () => {
