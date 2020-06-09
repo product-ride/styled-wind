@@ -165,7 +165,10 @@ export class CSSGen {
         // switch based on the first letter whether it is m, p etc
         switch (className[0]) {
           case 'm': {
-            const [, direction, value] = className.match(dyanmicPopertyClass);
+            // TODO: don't use any, figure out why ts throws error without any
+            const [, direction, value] = className.match(
+              dyanmicPopertyClass
+            ) as any;
 
             const themeValue = this.config.theme.margin[value];
             const directionString = this.expandDirectionChar(direction);
@@ -173,7 +176,9 @@ export class CSSGen {
             return `margin${directionString}: ${themeValue};`;
           }
           case 'p': {
-            const [, direction, value] = className.match(dyanmicPopertyClass);
+            const [, direction, value] = className.match(
+              dyanmicPopertyClass
+            ) as any;
 
             // TODO: not sure how to use this.config.theme.spacing
             const themeValue = this.config.theme.spacing[value];
@@ -262,7 +267,7 @@ export class CSSGen {
       if (semiPropertyDynamicClass) {
         if (className.startsWith('bg-')) {
           // color => red-500;
-          const [, color] = className.match(semiPropertyDynamicClass);
+          const [, color] = className.match(semiPropertyDynamicClass) as any;
           const [colorName, contrast] = color.split('-');
           const themeColor = this.config.theme.colors[colorName][contrast];
 
@@ -294,7 +299,7 @@ export class CSSGen {
     return '';
   }
 
-  genCSS(classes: string[]) {
+  genCSS(classes: string[]): string[] {
     const withCustomClasses = this.hydrateCustomClasses(classes);
     const withPropertyValueClasses = this.hydratePropertyValueClasess(
       withCustomClasses
@@ -306,6 +311,6 @@ export class CSSGen {
       withDyanmicValueClasses
     );
 
-    return withSemiDynamicClasses.join('');
+    return withSemiDynamicClasses;
   }
 }
