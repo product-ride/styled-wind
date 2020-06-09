@@ -219,6 +219,7 @@ export class CSSGen {
 
                 return `border${directionExpanded}-width: ${value};`;
               }
+              // for text-black, placeholder-black
             } else if (className.startsWith('text')) {
               const props = className.split('-');
 
@@ -278,6 +279,7 @@ export class CSSGen {
   }
 
   private expandDirectionChar(direction: string) {
+    // TODO: change this switch to if else with pattern matching
     switch (direction) {
       case 't':
         return '-top';
