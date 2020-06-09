@@ -15,20 +15,23 @@ const getHydratedTemplateString = (
   strings: TemplateStringsArray,
   ...expressions: string[]
 ) => {
-  const hydratedStrings = cssGen.genCSS(
-    strings.map((string) => {
-      if (string && string.trim().startsWith('.')) {
-        return string.trim().substr(1);
-      }
-      return string.trim();
+  const sanitizedStyles = strings
+    .map((stringsPart) => {
+      return stringsPart.split(';').map((string) => {
+        if (string && string.trim().startsWith('.')) {
+          return string.trim().substr(1);
+        }
+        return string.trim();
+      });
     })
-  );
-  console.log(hydratedStrings);
+    .flat();
+
+  const hydratedStrings = cssGen.genCSS(sanitizedStyles);
 
   const hydratedTemplateString =
     hydratedStrings.length > 0
       ? hydratedStrings.reduce((prev: string, cur: string, index: number) => {
-          return `${prev}${cur}${expressions[index] || ''}`;
+          return `${prev}${cur}${expressions[index] || ''};`;
         }, '')
       : hydratedStrings[0];
 
