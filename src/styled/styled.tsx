@@ -11,45 +11,28 @@ type StyledFn = (
 const config = generateStylesJS({});
 const cssGen = new CSSGen(config);
 
-const getHydratedTemplateString = (
-  strings: TemplateStringsArray,
-  ...expressions: string[]
-) => {
-  const sanitizedStyles = strings
-    .map((stringsPart) => {
-      return stringsPart.split(';').map((string) => {
-        if (string && string.trim().startsWith('.')) {
-          return string.trim().substr(1);
-        }
-        return string.trim();
-      });
-    })
-    .flat();
+const getHydratedTemplateString = (strings: TemplateStringsArray) => {
+  const sanitizedStyles = strings.map((stringsPart) => {
+    return stringsPart.split(';').map((string) => {
+      if (string && string.trim().startsWith('.')) {
+        return string.trim().substr(1);
+      }
+      return string.trim();
+    });
+  });
 
-  const hydratedStrings = cssGen.genCSS(sanitizedStyles);
-
-  const hydratedTemplateString =
-    hydratedStrings.length > 0
-      ? hydratedStrings.reduce((prev: string, cur: string, index: number) => {
-          return `${prev}${cur}${expressions[index] || ''};`;
-        }, '')
-      : hydratedStrings[0];
-
-  return hydratedTemplateString;
+  return sanitizedStyles.map((sanitizedStyle) =>
+    cssGen.genCSS(sanitizedStyle).join(';')
+  ) as any;
 };
 
 const genStyledFn = (el: string): StyledFn => (
   strings: TemplateStringsArray,
   ...expressions: string[]
 ) => {
-  const hydratedTemplateString = getHydratedTemplateString(
-    strings,
-    ...expressions
-  );
+  const hydratedTemplateString = getHydratedTemplateString(strings);
 
-  return styled[el]`
-    ${hydratedTemplateString}
-  `;
+  return styled[el](hydratedTemplateString, ...expressions);
 };
 
 const styledWrapper:
@@ -58,14 +41,9 @@ const styledWrapper:
   strings: TemplateStringsArray,
   ...expressions: string[]
 ) => {
-  const hydratedTemplateString = getHydratedTemplateString(
-    strings,
-    ...expressions
-  );
+  const hydratedTemplateString = getHydratedTemplateString(strings);
 
-  return styled(tag)`
-    ${hydratedTemplateString}
-  `;
+  return styled(tag)(hydratedTemplateString, ...expressions);
 };
 
 domElements.forEach((domElement) => {
