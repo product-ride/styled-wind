@@ -171,9 +171,16 @@ export class CSSGen {
             ) as any;
 
             const themeValue = this.config.theme.margin[value];
-            const directionString = this.expandDirectionChar(direction);
+            const directionStringorArray = this.expandDirectionChar(direction);
+            if (Array.isArray(directionStringorArray)) {
+              return directionStringorArray.reduce((prev, direction) => {
+                return `${prev}
+                margin${direction}: ${themeValue};
+                `;
+              }, '');
+            }
 
-            return `margin${directionString}: ${themeValue};`;
+            return `margin${directionStringorArray}: ${themeValue};`;
           }
           case 'p': {
             const [, direction, value] = className.match(
@@ -182,9 +189,16 @@ export class CSSGen {
 
             // TODO: not sure how to use this.config.theme.spacing
             const themeValue = this.config.theme.spacing[value];
-            const directionString = this.expandDirectionChar(direction);
+            const directionStringorArray = this.expandDirectionChar(direction);
+            if (Array.isArray(directionStringorArray)) {
+              return directionStringorArray.reduce((prev, direction) => {
+                return `${prev}
+                padding${direction}: ${themeValue};
+                `;
+              }, '');
+            }
 
-            return `padding${directionString}: ${themeValue};`;
+            return `padding${directionStringorArray}: ${themeValue};`;
           }
           default: {
             // scale
@@ -220,9 +234,18 @@ export class CSSGen {
               else if (props.length === 3) {
                 const [, direction, valueString] = props;
                 const value = `${parseInt(valueString)}px`;
-                const directionExpanded = this.expandDirectionChar(direction);
+                const directionStringorArray = this.expandDirectionChar(
+                  direction
+                );
+                if (Array.isArray(directionStringorArray)) {
+                  return directionStringorArray.reduce((prev, direction) => {
+                    return `${prev}
+                    border${direction}-width: ${value};
+                `;
+                  }, '');
+                }
 
-                return `border${directionExpanded}-width: ${value};`;
+                return `border${directionStringorArray}-width: ${value};`;
               }
               // for text-black, placeholder-black
             } else if (className.startsWith('text')) {
@@ -286,6 +309,10 @@ export class CSSGen {
   private expandDirectionChar(direction: string) {
     // TODO: change this switch to if else with pattern matching
     switch (direction) {
+      case 'y':
+        return ['-top', '-bottom'];
+      case 'x':
+        return ['-left', '-right'];
       case 't':
         return '-top';
       case 'b':
