@@ -22,7 +22,7 @@ describe('CSSGen', () => {
     `);
   });
 
-  it('should generate css for classes like `float-right`', () => {
+  it('should generate css for classes like `float-right, overflow-x-auto`', () => {
     const css = cssGen.genCSS(['float-right', 'overflow-x-auto']);
 
     expect(css).toMatchInlineSnapshot(`
@@ -165,6 +165,36 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`
       Array [
         "--border-opacity: 0.25",
+      ]
+    `);
+  });
+
+  it('should generate css for max width', () => {
+    const css = cssGen.genCSS(['max-w-6xl']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "max-width: 72rem;",
+      ]
+    `);
+  });
+
+  it('should generate css for width', () => {
+    const css = cssGen.genCSS(['w-10/12']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "width: 83.333333%;",
+      ]
+    `);
+  });
+
+  it('should generate css for height', () => {
+    const css = cssGen.genCSS(['h-10/12']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "height: 83.333333%;",
       ]
     `);
   });

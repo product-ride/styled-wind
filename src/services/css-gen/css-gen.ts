@@ -219,36 +219,43 @@ export class CSSGen {
     'min-w-full': 'min-width: 100%;'
   };
 
-  private staticPropertyClasses = [
-    /float-(.*)/,
-    /overflow-(.*)/,
-    /appearance-(.*)/,
-    /pointer-events-(.*)/,
-    /top-(.*)/,
-    /bottom-(.*)/,
-    /right-(.*)/,
-    /left-(.*)/,
-    /clear-(.*)/
-  ];
+  private staticPropertyClassesRegEx = {
+    float: /^float-(.*)/,
+    overflow: /^overflow-(.*)/,
+    appearance: /^appearance-(.*)/,
+    pointerEvents: /^pointer-events-(.*)/,
+    top: /^top-(.*)/,
+    bottom: /^bottom-(.*)/,
+    right: /^right-(.*)/,
+    left: /^left-(.*)/,
+    clear: /^clear-(.*)/
+  };
+
+  private staticPropertyClasses = Object.values(
+    this.staticPropertyClassesRegEx
+  );
 
   private dynamicPropertyClassesRegEx = {
-    MARGIN: /m(.)?-(.*)/,
-    PADDING: /p(.)?-(.*)/,
-    SCALE: /scale-(.*)/,
-    BORDER: /border-[0-9]/,
-    BORDER_OPACITY: /border-opacity-[0-9]/,
-    BORDER_COLOR: /border-(.*)-[0-9]/,
-    BORDER_WITH_DIRECTION: /border-(.)-[0-9]/,
-    TEXT_COLOR: /text-(.*)/,
-    TEXT_SIZE: /text-(xs|sm|base|lg|[0-9]xl)/,
-    TEXT_WEIGHT: /font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)/,
-    TEXT_OPACITY: /text-opacity-[0-9]/,
-    PLACEHOLDER_COLOR: /placeholder-(.*)/,
-    PLACEHOLDER_OPACITY: /placeholder-opacity-[0-9]/,
-    STROKE: /stroke-[0-9]/,
-    LETTER_SPACING: /tracking-(tighter|tight|normal|wide|wider|widest)/,
-    LINE_HEIGHT: /leading-(.*)/,
-    OPACITY: /opacity-[0-9]/
+    MARGIN: /^m(.)?-(.*)/,
+    PADDING: /^p(.)?-(.*)/,
+    SCALE: /^scale-(.*)/,
+    BORDER: /^border-[0-9]/,
+    BORDER_OPACITY: /^border-opacity-[0-9]/,
+    BORDER_COLOR: /^border-(.*)-[0-9]/,
+    BORDER_WITH_DIRECTION: /^border-(.)-[0-9]/,
+    TEXT_COLOR: /^text-(.*)/,
+    TEXT_SIZE: /^text-(xs|sm|base|lg|[0-9]xl)/,
+    TEXT_WEIGHT: /^font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)/,
+    TEXT_OPACITY: /^text-opacity-[0-9]/,
+    PLACEHOLDER_COLOR: /^placeholder-(.*)/,
+    PLACEHOLDER_OPACITY: /^placeholder-opacity-[0-9]/,
+    STROKE: /^stroke-[0-9]/,
+    LETTER_SPACING: /^tracking-(tighter|tight|normal|wide|wider|widest)/,
+    LINE_HEIGHT: /^leading-(.*)/,
+    OPACITY: /^opacity-[0-9]/,
+    MAX_WIDTH: /^max-w-(.*)/,
+    WIDTH: /^w-(.*)/,
+    HEIGHT: /^h-(.*)/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -469,6 +476,23 @@ export class CSSGen {
 
             return `color: ${colorHex};`;
           }
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.MAX_WIDTH)
+        ) {
+          const [, , breakpoint] = className.split('-');
+          const size = this.config.theme.maxWidth[breakpoint];
+
+          return `max-width: ${size};`;
+        } else if (className.match(this.dynamicPropertyClassesRegEx.WIDTH)) {
+          const [, width] = className.split('-');
+          const widthValue = this.config.theme.width[width];
+
+          return `width: ${widthValue};`;
+        } else if (className.match(this.dynamicPropertyClassesRegEx.HEIGHT)) {
+          const [, height] = className.split('-');
+          const heightValue = this.config.theme.width[height];
+
+          return `height: ${heightValue};`;
         }
 
         return className;
