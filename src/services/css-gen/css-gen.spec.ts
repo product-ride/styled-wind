@@ -286,4 +286,47 @@ describe('CSSGen', () => {
       ]
     `);
   });
+
+  it('should generate css for border-radius without direction', () => {
+    const css = cssGen.genCSS([
+      'rounded',
+      'rounded-none',
+      'rounded-md',
+      'rounded-lg',
+      'rounded-full'
+    ]);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "border-radius: 0.25rem;",
+        "border-radius: 0;",
+        "border-radius: 0.375rem;",
+        "border-radius: 0.5rem;",
+        "border-radius: 9999px;",
+      ]
+    `);
+  });
+
+  it('should generate css for border-radius with direction', () => {
+    const css = cssGen.genCSS([
+      'rounded-t',
+      'rounded-tl-md',
+      'rounded-br-none'
+    ]);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "
+                        border-top-left-radius: 0.25rem;
+                        border-top-right-radius: 0.25rem;
+                        ",
+        "
+                        border-top-left-radius: 0.375rem;
+                      ",
+        "
+                        border-bottom-right-radius: 0;
+                      ",
+      ]
+    `);
+  });
 });

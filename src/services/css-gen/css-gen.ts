@@ -267,7 +267,8 @@ export class CSSGen {
     GRID_COL: /^((col-(start|end|span)-(.*))|col-auto)$/,
     GRID_GAP: /^gap-[0-9]/,
     GRID_ROW_GAP: /^row-gap-[0-9]/,
-    GRID_COL_GAP: /^col-gap-[0-9]/
+    GRID_COL_GAP: /^col-gap-[0-9]/,
+    BORDER_RADIUS: /^(rounded$|(rounded-(.*)$)|(rounded-(.*)-(.*)))/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -576,6 +577,86 @@ export class CSSGen {
           const gapValue = this.config.theme.gap[gap];
 
           return `col-gap: ${gapValue};`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.BORDER_RADIUS)
+        ) {
+          const props = className.split('-');
+          const defaultRadius = this.config.theme.borderRadius.default;
+          const directions = ['t', 'b', 'r', 'l', 'tr', 'tl', 'br', 'bl'];
+          const getBorderRadiusForDirection = (
+            direction: string,
+            radiusValue: string
+          ) => {
+            switch (direction) {
+              case 't': {
+                return `
+                  border-top-left-radius: ${radiusValue};
+                  border-top-right-radius: ${radiusValue};
+                  `;
+              }
+              case 'b': {
+                return `
+                  border-bottom-right-radius: ${radiusValue};
+                  border-bottom-left-radius: ${radiusValue};
+                  `;
+              }
+              case 'l': {
+                return `
+                  border-top-left-radius: ${radiusValue};
+                  border-bottom-left-radius: ${radiusValue};
+                  `;
+              }
+              case 'r': {
+                return `
+                  border-top-right-radius: 0.25rem;
+                  border-bottom-right-radius: 0.25rem;
+                `;
+              }
+              case 'tl': {
+                return `
+                  border-top-left-radius: ${radiusValue};
+                `;
+              }
+              case 'tr': {
+                return `
+                  border-top-right-radius: ${radiusValue};
+                `;
+              }
+              case 'br': {
+                return `
+                  border-bottom-right-radius: ${radiusValue};
+                `;
+              }
+              default:
+                return '';
+            }
+          };
+
+          if (props.length === 1) {
+            return `border-radius: ${defaultRadius};`;
+          } else if (props.length === 2) {
+            const [, sizeOrDirection] = props;
+
+            if (directions.includes(sizeOrDirection.trim())) {
+              return getBorderRadiusForDirection(
+                sizeOrDirection.trim(),
+                defaultRadius
+              );
+            } else {
+              const radiusValue = this.config.theme.borderRadius[
+                sizeOrDirection
+              ];
+
+              return `border-radius: ${radiusValue};`;
+            }
+          } else if (props.length === 3) {
+            const [, direction, size] = props;
+            const radiusValue = this.config.theme.borderRadius[size];
+
+            return getBorderRadiusForDirection(direction, radiusValue);
+          } else {
+            return className;
+          }
         }
 
         return className;
