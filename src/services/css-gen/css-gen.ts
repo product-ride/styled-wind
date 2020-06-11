@@ -216,7 +216,11 @@ export class CSSGen {
     'min-h-full': 'min-height: 100%;',
     'min-h-screen': 'min-height: 100vh;',
     'min-w-0': 'min-width: 0;',
-    'min-w-full': 'min-width: 100%;'
+    'min-w-full': 'min-width: 100%;',
+    'grid-flow-row': 'grid-auto-flow: row;',
+    'grid-flow-col': 'grid-auto-flow: column;',
+    'grid-flow-row-dense': 'grid-auto-flow: row dense',
+    'grid-flow-col-dense': 'grid-auto-flow: column dense;'
   };
 
   private staticPropertyClassesRegEx = {
