@@ -5,6 +5,7 @@ export class CSSGen {
   private config: any;
   // classes which need no regex matching
   private staticClasses = {
+    container: 'width: 100%;',
     clearfix: `content: "";
                display: table;
                clear: both;`,
