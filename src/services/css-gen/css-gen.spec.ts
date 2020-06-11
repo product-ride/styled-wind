@@ -198,4 +198,92 @@ describe('CSSGen', () => {
       ]
     `);
   });
+
+  it('should generate css for grid-template-cols', () => {
+    const css = cssGen.genCSS(['grid-cols-8', 'grid-cols-none']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "grid-template-columns: repeat(8, minmax(0, 1fr));",
+        "grid-template-columns: none",
+      ]
+    `);
+  });
+
+  it('should generate css for grid-template-rows', () => {
+    const css = cssGen.genCSS(['grid-rows-8', 'grid-rows-none']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "grid-template-rows: repeat(8, minmax(0, 1fr));",
+        "grid-template-rows: none",
+      ]
+    `);
+  });
+
+  it('should generate css for grid-row', () => {
+    const css = cssGen.genCSS([
+      'row-auto',
+      'row-span-8',
+      'row-start-2',
+      'row-end-5'
+    ]);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "grid-row: auto",
+        "grid-row: span 8 / span 8;",
+        "grid-row-start: 2;",
+        "grid-row-end: 5;",
+      ]
+    `);
+  });
+
+  it('should generate css for grid-row', () => {
+    const css = cssGen.genCSS([
+      'col-auto',
+      'col-span-8',
+      'col-start-2',
+      'col-end-5'
+    ]);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "grid-col: auto",
+        "grid-col: span 8 / span 8;",
+        "grid-col-start: 2;",
+        "grid-col-end: 5;",
+      ]
+    `);
+  });
+
+  it('should generate css for grid-gap', () => {
+    const css = cssGen.genCSS(['gap-16']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "gap: 4rem",
+      ]
+    `);
+  });
+
+  it('should generate css for grid-row-gap', () => {
+    const css = cssGen.genCSS(['row-gap-10']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "row-gap: 2.5rem",
+      ]
+    `);
+  });
+
+  it('should generate css for grid-col-gap', () => {
+    const css = cssGen.genCSS(['col-gap-10']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "col-gap: 2.5rem",
+      ]
+    `);
+  });
 });

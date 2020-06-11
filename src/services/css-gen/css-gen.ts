@@ -248,8 +248,8 @@ export class CSSGen {
     BORDER_COLOR: /^border-(.*)-[0-9]/,
     BORDER_WITH_DIRECTION: /^border-(.)-[0-9]/,
     TEXT_COLOR: /^text-(.*)/,
-    TEXT_SIZE: /^text-(xs|sm|base|lg|[0-9]xl)/,
-    TEXT_WEIGHT: /^font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)/,
+    TEXT_SIZE: /^text-(xs|sm|base|lg|[0-9]xl)$/,
+    TEXT_WEIGHT: /^font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)$/,
     TEXT_OPACITY: /^text-opacity-[0-9]/,
     PLACEHOLDER_COLOR: /^placeholder-(.*)/,
     PLACEHOLDER_OPACITY: /^placeholder-opacity-[0-9]/,
@@ -259,7 +259,14 @@ export class CSSGen {
     OPACITY: /^opacity-[0-9]/,
     MAX_WIDTH: /^max-w-(.*)/,
     WIDTH: /^w-(.*)/,
-    HEIGHT: /^h-(.*)/
+    HEIGHT: /^h-(.*)/,
+    GRID_TEMPLATE_COLS: /^grid-cols-(.*)/,
+    GRID_TEMPLATE_ROWS: /^grid-rows-(.*)/,
+    GRID_ROW: /^((row-(start|end|span)-(.*))|row-auto)$/,
+    GRID_COL: /^((col-(start|end|span)-(.*))|col-auto)$/,
+    GRID_GAP: /^gap-[0-9]/,
+    GRID_ROW_GAP: /^row-gap-[0-9]/,
+    GRID_COL_GAP: /^col-gap-[0-9]/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -497,6 +504,77 @@ export class CSSGen {
           const heightValue = this.config.theme.width[height];
 
           return `height: ${heightValue};`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.GRID_TEMPLATE_COLS)
+        ) {
+          const [, , templateValue] = className.split('-');
+
+          if (templateValue.trim() === 'none') {
+            return 'grid-template-columns: none';
+          } else {
+            return `grid-template-columns: repeat(${templateValue}, minmax(0, 1fr));`;
+          }
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.GRID_TEMPLATE_ROWS)
+        ) {
+          const [, , templateValue] = className.split('-');
+
+          if (templateValue.trim() === 'none') {
+            return 'grid-template-rows: none';
+          } else {
+            return `grid-template-rows: repeat(${templateValue}, minmax(0, 1fr));`;
+          }
+        } else if (className.match(this.dynamicPropertyClassesRegEx.GRID_ROW)) {
+          const props = className.split('-');
+
+          if (props.length === 2) {
+            const [, value] = props;
+
+            return value.trim() === 'auto' ? `grid-row: auto` : className;
+          } else if (props.length === 3) {
+            const [, type, value] = props;
+
+            if (type === 'span') {
+              return `grid-row: span ${value} / span ${value};`;
+            } else if (type === 'end' || type === 'start') {
+              return `grid-row-${type}: ${value};`;
+            }
+          }
+        } else if (className.match(this.dynamicPropertyClassesRegEx.GRID_COL)) {
+          const props = className.split('-');
+
+          if (props.length === 2) {
+            const [, value] = props;
+
+            return value.trim() === 'auto' ? `grid-col: auto` : className;
+          } else if (props.length === 3) {
+            const [, type, value] = props;
+
+            if (type === 'span') {
+              return `grid-col: span ${value} / span ${value};`;
+            } else if (type === 'end' || type === 'start') {
+              return `grid-col-${type}: ${value};`;
+            }
+          }
+        } else if (className.match(this.dynamicPropertyClassesRegEx.GRID_GAP)) {
+          const [, gap] = className.split('-');
+          const gapValue = this.config.theme.gap[gap];
+
+          return `gap: ${gapValue}`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.GRID_ROW_GAP)
+        ) {
+          const [, , gap] = className.split('-');
+          const gapValue = this.config.theme.gap[gap];
+
+          return `row-gap: ${gapValue}`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.GRID_COL_GAP)
+        ) {
+          const [, , gap] = className.split('-');
+          const gapValue = this.config.theme.gap[gap];
+
+          return `col-gap: ${gapValue}`;
         }
 
         return className;
