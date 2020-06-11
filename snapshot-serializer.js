@@ -5,9 +5,9 @@ module.exports = {
   test: (val) => typeof val === 'string',
 
   serialize: (val) => {
-    return prettyFormat(val.trim().replace(/\\n/gi, ''))
+    return prettyFormat(val.trim().replace(/\n/gi, ''))
       .trim()
-      .replace(/\\r/gi, '')
+      .replace(/\r/gi, '')
       .trim();
   },
 
