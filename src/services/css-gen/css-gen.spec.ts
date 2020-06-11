@@ -56,18 +56,6 @@ describe('CSSGen', () => {
     `);
   });
 
-  it('should generate css for scale classes', () => {
-    const css = cssGen.genCSS(['scale-25', 'scale-x-100']);
-
-    expect(css).toMatchInlineSnapshot(`
-      Array [
-        "--transform-scale-x: 0.25;
-                              --transform-scale-y: 0.25;",
-        "--transform-scale-x: 1;",
-      ]
-    `);
-  });
-
   it('should generate css for scale border-width', () => {
     const css = cssGen.genCSS(['border-0', 'border-t-5']);
 
@@ -97,6 +85,36 @@ describe('CSSGen', () => {
       Array [
         "color: #000;",
         "color: #f56565;",
+      ]
+    `);
+  });
+
+  it('should generate css for stroke', () => {
+    const css = cssGen.genCSS(['stroke-1']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "stroke-width: 1",
+      ]
+    `);
+  });
+
+  it('should generate css for text size', () => {
+    const css = cssGen.genCSS(['text-6xl']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "font-size: 4rem",
+      ]
+    `);
+  });
+
+  it('should generate css for text weight', () => {
+    const css = cssGen.genCSS(['font-bold']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "font-weight: 700",
       ]
     `);
   });

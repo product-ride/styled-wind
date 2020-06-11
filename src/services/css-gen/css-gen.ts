@@ -89,7 +89,101 @@ export class CSSGen {
     'flex-shrink': `flex-shrink: 1;`,
     'flex-shrink-0': `flex-shrink: 0;`,
     'flex-grow': `flex-grow: 1;`,
-    'flex-grow-0': `flex-shrink: 0;`
+    'flex-grow-0': `flex-shrink: 0;`,
+    'object-contain': 'object-fit: contain;',
+    'object-cover': 'object-fit: cover;',
+    'object-fill': 'object-fit: fill',
+    'object-none': 'object-fit: none',
+    'object-scale-down': 'object-fit: scale-down;',
+    'object-bottom': 'object-position: bottom;',
+    'object-center': 'object-position: center;',
+    'object-left': 'object-position: left;',
+    'object-left-bottom': 'object-position: left bottom;',
+    'object-left-top': 'object-position: left top;',
+    'object-right': 'object-position: right;',
+    'object-right-bottom': 'object-position: right bottom;',
+    'object-right-top': 'object-position: right top;',
+    'object-top': 'object-position: top;',
+    'bg-fixed': 'background-attachment: fixed;',
+    'bg-local': 'background-attachment: local;',
+    'bg-scroll': 'background-attachment: scroll;',
+    'bg-bottom': 'background-position: bottom;',
+    'bg-center': 'background-position: center;',
+    'bg-left': 'background-position: center;',
+    'bg-left-bottom': 'background-position: center;',
+    'bg-left-top': 'background-position: center;',
+    'bg-right': 'background-position: center;',
+    'bg-right-bottom': 'background-position: center;',
+    'bg-right-top': 'background-position: center;',
+    'bg-top': 'background-position: top;',
+    'bg-repeat': 'background-repeat: repeat;',
+    'bg-no-repeat': 'background-repeat: no-repeat;',
+    'bg-repeat-x': 'background-repeat: repeat-x;',
+    'bg-repeat-y': 'background-repeat: repeat-y;',
+    'bg-repeat-round': 'background-repeat: repeat-round;',
+    'bg-repeat-space': 'background-repeat: space;',
+    'bg-auto': 'background-size: auto;',
+    'bg-cover': 'background-size: cover;',
+    'bg-contain': 'background-size: contain;',
+    'flex-row': 'flex-direction: row',
+    'flex-row-reverse': 'flex-direction: row',
+    'flex-col': 'flex-direction: column',
+    'flex-col-reverse': 'flex-direction: column-reverse',
+    'flex-wrap': 'flex-wrap: wrap;',
+    'flex-wrap-reverse': 'flex-wrap: wrap-reverse;',
+    'flex-no-wrap': 'flex-wrap: nowrap;',
+    'items-stretch': 'align-items: stretch;',
+    'items-start': 'align-items: flex-start;',
+    'items-center': 'align-items: center;',
+    'items-end': 'align-items: flex-end;',
+    'items-baseline': 'align-items: baseline;',
+    'content-start': 'align-content: flex-start;',
+    'content-center': 'align-content: center;',
+    'content-end': 'align-content: flex-end;',
+    'content-between': 'align-content: space-between;',
+    'content-around': 'align-content: space-around;',
+    'self-auto': 'align-self: auto;',
+    'self-start': 'align-self: flex-start;',
+    'self-end': 'align-self: flex-end;',
+    'self-center': 'align-self: center;',
+    'self-stretch': 'align-self: stretch;',
+    'justify-start': 'justify-content: flex-start;',
+    'justify-end': 'justify-content: flex-end;',
+    'justify-center': 'justify-content: center;',
+    'justify-between': 'justify-content: space-between;',
+    'justify-around': 'justify-content: space-around;',
+    'justify-evenly': 'justify-content: space-evenly;',
+    'border-solid': 'border-style: solid;',
+    'border-dashed': 'border-style: dashed;',
+    'border-dotted': 'border-style: dotted;',
+    'border-double': 'border-style: double;',
+    'border-none': 'border-style: none;',
+    'select-none': 'user-select: none;',
+    'select-text': 'user-select: text;',
+    'select-all': 'user-select: all;',
+    'select-auto': 'user-select: auto;',
+    'border-collapse': 'border-collapse: collapse;',
+    'border-separate': 'border-collapse: separate;',
+    'shadow-xs': 'box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);',
+    'shadow-sm': 'box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);',
+    shadow:
+      'box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);',
+    'shadow-md':
+      'box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);',
+    'shadow-lg':
+      'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);',
+    'shadow-xl':
+      'box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);',
+    'shadow-2xl': 'box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);',
+    'shadow-inner': 'box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);',
+    'shadow-outline': 'box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);',
+    'shadow-none': 'box-shadow: none;',
+    'font-sans':
+      'font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";',
+    'font-serif':
+      'font-family: Georgia, Cambria, "Times New Roman", Times, serif;',
+    'font-mono':
+      'font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;'
   };
 
   private staticPropertyClasses = [
@@ -100,7 +194,8 @@ export class CSSGen {
     /top-(.*)/,
     /bottom-(.*)/,
     /right-(.*)/,
-    /left-(.*)/
+    /left-(.*)/,
+    /clear-(.*)/
   ];
 
   private dynamicPropertyClassesRegEx = {
@@ -109,8 +204,11 @@ export class CSSGen {
     SCALE: /scale-(.*)/,
     BORDER: /border-[0-9]/,
     BORDER_WITH_DIRECTION: /border-(.*)-[0-9]/,
-    TEXT: /text-(.*)/,
-    PLACEHOLDER: /placeholder-(.*)/
+    TEXT_COLOR: /text-(.*)/,
+    TEXT_SIZE: /text-(xs|sm|base|lg|[0-9]xl)/,
+    TEXT_WEIGHT: /font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)/,
+    PLACEHOLDER_COLOR: /placeholder-(.*)/,
+    STROKE: /stroke-[0-9]/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -206,24 +304,6 @@ export class CSSGen {
           }
 
           return `padding${directionStringorArray}: ${themeValue};`;
-        } else if (className.match(this.dynamicPropertyClassesRegEx.SCALE)) {
-          const props = className.split('-');
-
-          // scale-10
-          if (props.length === 2) {
-            const [, valueString] = props;
-            const value = parseInt(valueString) / 100;
-
-            return `--transform-scale-x: ${value};
-                        --transform-scale-y: ${value};`;
-          }
-          // scale-x-0 or scale-y-100
-          else if (props.length === 3) {
-            const [, axis, valueString] = props;
-            const value = parseInt(valueString) / 100;
-
-            return `--transform-scale-${axis}: ${value};`;
-          }
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.BORDER) ||
           className.match(
@@ -254,10 +334,24 @@ export class CSSGen {
 
             return `border${directionStringorArray}-width: ${value};`;
           }
-          // for text-black, placeholder-black
         } else if (
-          className.match(this.dynamicPropertyClassesRegEx.TEXT) ||
-          className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER)
+          className.match(this.dynamicPropertyClassesRegEx.TEXT_SIZE)
+        ) {
+          const [, size] = className.split('-');
+          const fontSize = this.config.theme.fontSize[size];
+
+          return `font-size: ${fontSize}`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.TEXT_WEIGHT)
+        ) {
+          const [, weight] = className.split('-');
+          const fontWeight = this.config.theme.fontWeight[weight];
+
+          return `font-weight: ${fontWeight}`;
+        } // for text-black, placeholder-black
+        else if (
+          className.match(this.dynamicPropertyClassesRegEx.TEXT_COLOR) ||
+          className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER_COLOR)
         ) {
           const props = className.split('-');
 
@@ -275,6 +369,10 @@ export class CSSGen {
 
             return `color: ${colorHex};`;
           }
+        } else if (className.match(this.dynamicPropertyClassesRegEx.STROKE)) {
+          const [, value] = className.split('-');
+
+          return `stroke-width: ${value}`;
         }
 
         return className;
