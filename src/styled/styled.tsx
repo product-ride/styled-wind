@@ -13,17 +13,34 @@ const cssGen = new CSSGen(config);
 
 const getHydratedTemplateString = (strings: TemplateStringsArray) => {
   const sanitizedStyles = strings.map((stringsPart) => {
-    return stringsPart.split(';').map((string) => {
-      if (string && string.trim().startsWith('.')) {
-        return string.trim().substr(1);
-      }
-      return string.trim();
-    });
+    const classes = stringsPart.split(';');
+    /*
+      This is to hande the following casse
+
+      margin-top: ${(props: any) => props.margin};
+     .text-yellow-900;
+
+     if we don't do this then we might miss the ; from `margin-top` style
+     and style wind style will be applied in the same line leading to
+
+     margin-top: 20pxcolor:#fff;
+    */
+    if (classes[0].length === 0) {
+      return [';', ...classes];
+    } else {
+      return classes;
+    }
   });
 
-  return sanitizedStyles.map((sanitizedStyle) =>
-    cssGen.genCSS(sanitizedStyle)
-  ) as any;
+  return sanitizedStyles.map((sanitizedStyle) => {
+    return sanitizedStyle.map((style) => {
+      if (style.trim().startsWith('.')) {
+        return cssGen.genCSS([style.trim().substr(1)]).trim();
+      } else {
+        return style;
+      }
+    });
+  }) as any;
 };
 
 const genStyledFn = (el: string): StyledFn => (
