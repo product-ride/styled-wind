@@ -743,7 +743,7 @@ export class CSSGen {
     const lg = this.config.theme.screens.lg;
 
     for (const pseudoClass of classes) {
-      const [prefix, className] = pseudoClass;
+      const [prefix, className] = pseudoClass.split(':');
 
       switch (prefix.trim()) {
         case 'hover':
