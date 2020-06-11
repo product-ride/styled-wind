@@ -229,7 +229,9 @@ export class CSSGen {
     PADDING: /p(.)?-(.*)/,
     SCALE: /scale-(.*)/,
     BORDER: /border-[0-9]/,
-    BORDER_WITH_DIRECTION: /border-(.*)-[0-9]/,
+    BORDER_OPACITY: /border-opacity-[0-9]/,
+    BORDER_COLOR: /border-(.*)-[0-9]/,
+    BORDER_WITH_DIRECTION: /border-(.)-[0-9]/,
     TEXT_COLOR: /text-(.*)/,
     TEXT_SIZE: /text-(xs|sm|base|lg|[0-9]xl)/,
     TEXT_WEIGHT: /font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)/,
@@ -336,6 +338,13 @@ export class CSSGen {
 
           return `padding${directionStringorArray}: ${themeValue};`;
         } else if (
+          className.match(this.dynamicPropertyClassesRegEx.BORDER_OPACITY)
+        ) {
+          const [, , opacity] = className.split('-');
+          const opacityValue = parseInt(opacity) / 100;
+
+          return `--border-opacity: ${opacityValue}`;
+        } else if (
           className.match(this.dynamicPropertyClassesRegEx.BORDER) ||
           className.match(
             this.dynamicPropertyClassesRegEx.BORDER_WITH_DIRECTION
@@ -371,21 +380,21 @@ export class CSSGen {
           const [, size] = className.split('-');
           const fontSize = this.config.theme.fontSize[size];
 
-          return `font-size: ${fontSize}`;
+          return `font-size: ${fontSize};`;
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.TEXT_WEIGHT)
         ) {
           const [, weight] = className.split('-');
           const fontWeight = this.config.theme.fontWeight[weight];
 
-          return `font-weight: ${fontWeight}`;
+          return `font-weight: ${fontWeight};`;
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER_OPACITY)
         ) {
           const [, , opacity] = className.split('-');
           const opacityValue = parseInt(opacity) / 100;
 
-          return `--placeholder-opacity: ${opacityValue}`;
+          return `--placeholder-opacity: ${opacityValue};`;
         } // for text-black, placeholder-black
         else if (
           className.match(this.dynamicPropertyClassesRegEx.TEXT_COLOR) ||
@@ -413,30 +422,46 @@ export class CSSGen {
           const [, spacing] = className.split('-');
           const spacingValue = this.config.theme.letterSpacing[spacing];
 
-          return `letter-spacing: ${spacingValue}`;
+          return `letter-spacing: ${spacingValue};`;
         } else if (className.match(this.dynamicPropertyClassesRegEx.STROKE)) {
           const [, value] = className.split('-');
 
-          return `stroke-width: ${value}`;
+          return `stroke-width: ${value};`;
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.LINE_HEIGHT)
         ) {
           const [, height] = className.split('-');
           const lineHeight = this.config.theme.lineHeight[height];
 
-          return `line-height: ${lineHeight}`;
+          return `line-height: ${lineHeight};`;
         } else if (className.match(this.dynamicPropertyClassesRegEx.OPACITY)) {
           const [, opacity] = className.split('-');
           const opacityValue = parseInt(opacity) / 100;
 
-          return `opacity: ${opacityValue}`;
+          return `opacity: ${opacityValue};`;
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.TEXT_OPACITY)
         ) {
           const [, , opacity] = className.split('-');
           const opacityValue = parseInt(opacity) / 100;
 
-          return `opacity: ${opacityValue}`;
+          return `opacity: ${opacityValue};`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.BORDER_COLOR)
+        ) {
+          const props = className.split('-');
+
+          if (props.length === 2) {
+            const [, color] = props;
+            const colorHex = this.config.theme.colors[color];
+
+            return `color: ${colorHex};`;
+          } else if (props.length === 3) {
+            const [, color, contrast] = props;
+            const colorHex = this.config.theme.colors[color][contrast];
+
+            return `color: ${colorHex};`;
+          }
         }
 
         return className;

@@ -94,7 +94,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "stroke-width: 1",
+        "stroke-width: 1;",
       ]
     `);
   });
@@ -104,7 +104,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "font-size: 4rem",
+        "font-size: 4rem;",
       ]
     `);
   });
@@ -114,7 +114,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "font-weight: 700",
+        "font-weight: 700;",
       ]
     `);
   });
@@ -124,7 +124,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "letter-spacing: 0.05em",
+        "letter-spacing: 0.05em;",
       ]
     `);
   });
@@ -134,7 +134,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "line-height: 1.25rem",
+        "line-height: 1.25rem;",
       ]
     `);
   });
@@ -144,7 +144,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "opacity: 0.25",
+        "opacity: 0.25;",
       ]
     `);
   });
@@ -154,7 +154,17 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "--placeholder-opacity: 0.25",
+        "--placeholder-opacity: 0.25;",
+      ]
+    `);
+  });
+
+  it('should generate css for border opacity', () => {
+    const css = cssGen.genCSS(['border-opacity-25']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "--border-opacity: 0.25",
       ]
     `);
   });
