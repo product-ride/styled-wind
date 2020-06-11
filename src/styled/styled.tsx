@@ -22,7 +22,7 @@ const getHydratedTemplateString = (strings: TemplateStringsArray) => {
   });
 
   return sanitizedStyles.map((sanitizedStyle) =>
-    cssGen.genCSS(sanitizedStyle).join(';')
+    cssGen.genCSS(sanitizedStyle)
   ) as any;
 };
 
