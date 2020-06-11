@@ -11,12 +11,9 @@ describe('CSSGen', () => {
   it('should generate css for classes like `clearfix`', () => {
     const css = cssGen.genCSS(['clearfix', 'antialiased']);
 
-    expect(css).toMatchInlineSnapshot(`
-      "content: \\"\\";
-                     display: table;
-                     clear: both;-webkit-font-smoothing: antialiased;
-                        -moz-osx-font-smoothing: grayscale;"
-    `);
+    expect(css).toMatchInlineSnapshot(
+      `"content: \\"\\";               display: table;               clear: both;-webkit-font-smoothing: antialiased;                  -moz-osx-font-smoothing: grayscale;"`
+    );
   });
 
   it('should generate css for classes like `float-right, overflow-x-auto`', () => {
@@ -206,13 +203,16 @@ describe('CSSGen', () => {
       'rounded-br-none'
     ]);
 
-    expect(css).toMatchInlineSnapshot(`
-      "border-top-left-radius: 0.25rem;
-                        border-top-right-radius: 0.25rem;
-                        
-                        border-top-left-radius: 0.375rem;
-                      
-                        border-bottom-right-radius: 0;"
-    `);
+    expect(css).toMatchInlineSnapshot(
+      `"border-top-left-radius: 0.25rem;                  border-top-right-radius: 0.25rem;                                    border-top-left-radius: 0.375rem;                                  border-bottom-right-radius: 0;"`
+    );
+  });
+
+  it('should generate css for hover', () => {
+    const css = cssGen.genCSS(['.hover:text-black']);
+
+    expect(css).toMatchInlineSnapshot(
+      `"border-top-left-radius: 0.25rem;                  border-top-right-radius: 0.25rem;                                    border-top-left-radius: 0.375rem;                                  border-bottom-right-radius: 0;"`
+    );
   });
 });
