@@ -209,7 +209,14 @@ export class CSSGen {
     'resize-x': 'resize: horizontal;',
     resize: 'resize: both;',
     'fill-current': 'fill: currentColor',
-    'stroke-current': 'stroke: currentColor;'
+    'stroke-current': 'stroke: currentColor;',
+    'max-h-full': 'max-height: 100%;',
+    'max-h-screen': 'max-height: 100vh;',
+    'min-h-0': 'min-height: 0;',
+    'min-h-full': 'min-height: 100%;',
+    'min-h-screen': 'min-height: 100vh;',
+    'min-w-0': 'min-width: 0;',
+    'min-w-full': 'min-width: 100%;'
   };
 
   private staticPropertyClasses = [
