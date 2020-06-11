@@ -1,4 +1,5 @@
 import last from 'lodash/last';
+import { warn } from '../../utils/utils';
 
 export class CSSGen {
   // stores the theme config object
@@ -716,7 +717,7 @@ export class CSSGen {
     return '';
   }
 
-  genCSS(classes: string[]): string[] {
+  private hydrateNormalClasses(classes: string[]): string {
     const withCustomClasses = this.hydrateCustomClasses(classes);
     const withPropertyValueClasses = this.hydratePropertyValueClasess(
       withCustomClasses
@@ -728,6 +729,103 @@ export class CSSGen {
       withDyanmicValueClasses
     );
 
-    return withSemiDynamicClasses;
+    return withSemiDynamicClasses.join('');
+  }
+
+  private hydratePseudoClasses(classes: string[]) {
+    const hoverClasses: string[] = [];
+    const activeClasses: string[] = [];
+    const smClasses: string[] = [];
+    const mdClasses: string[] = [];
+    const lgClasses: string[] = [];
+    const sm = this.config.theme.screens.sm;
+    const md = this.config.theme.screens.md;
+    const lg = this.config.theme.screens.lg;
+
+    for (const pseudoClass of classes) {
+      const [prefix, className] = pseudoClass;
+
+      switch (prefix.trim()) {
+        case 'hover':
+          hoverClasses.push(className);
+          break;
+        case 'active':
+          activeClasses.push(className);
+          break;
+        case 'sm':
+          smClasses.push(className);
+          break;
+        case 'lg':
+          lgClasses.push(className);
+          break;
+        case 'md':
+          mdClasses.push(className);
+          break;
+        default:
+          warn(`unknown pseudo class ${prefix}`);
+      }
+    }
+
+    const hydratedHoverClasses = this.hydrateNormalClasses(hoverClasses);
+    const hydratedActiveClasses = this.hydrateNormalClasses(activeClasses);
+    const hydratedSmClasses = this.hydrateNormalClasses(smClasses);
+    const hydratedMdClasses = this.hydrateNormalClasses(mdClasses);
+    const hydrateLgClasses = this.hydrateNormalClasses(lgClasses);
+
+    const hoverCSS =
+      hoverClasses.length > 0
+        ? `&:hover {
+      ${hydratedHoverClasses}
+      }`
+        : '';
+    const activeCSS =
+      activeClasses.length > 0
+        ? `&:active {
+      ${hydratedActiveClasses}
+      }`
+        : '';
+    const smCSS =
+      smClasses.length > 0
+        ? `@media (min-width: ${sm}) {
+      ${hydratedSmClasses}
+      }`
+        : '';
+    const mdCSS =
+      mdClasses.length > 0
+        ? `@media (min-width: ${md}) {
+      ${hydratedMdClasses}
+      }`
+        : '';
+    const lgCSS =
+      lgClasses.length > 0
+        ? `@media (min-width: ${lg}) {
+      ${hydrateLgClasses}
+      }`
+        : '';
+
+    return `
+        ${hoverCSS}
+        ${activeCSS}
+        ${smCSS}
+        ${mdCSS}
+        ${lgCSS}
+      `;
+  }
+
+  genCSS(classes: string[]): string {
+    const normalClasses = classes.filter(
+      (className) => className.split(':').length === 1
+    );
+    const pseudoClasses = classes.filter(
+      (className) => className.split(':').length > 1
+    );
+
+    const normalCSS = this.hydrateNormalClasses(normalClasses);
+    const pseudoCSS = this.hydratePseudoClasses(pseudoClasses);
+
+    return `
+      ${normalCSS}
+      ${pseudoCSS}
+    `;
   }
 }
