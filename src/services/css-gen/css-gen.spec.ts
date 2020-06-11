@@ -209,10 +209,22 @@ describe('CSSGen', () => {
   });
 
   it('should generate css for hover', () => {
-    const css = cssGen.genCSS(['.hover:text-black']);
+    const css = cssGen.genCSS(['hover:text-black']);
+
+    expect(css).toMatchInlineSnapshot(`"&:hover {      color: #000;      }"`);
+  });
+
+  it('should generate css active classes', () => {
+    const css = cssGen.genCSS(['active:text-black']);
+
+    expect(css).toMatchInlineSnapshot(`"&:active {      color: #000;      }"`);
+  });
+
+  it('should generate breakpoint css', () => {
+    const css = cssGen.genCSS(['sm:text-black']);
 
     expect(css).toMatchInlineSnapshot(
-      `"border-top-left-radius: 0.25rem;                  border-top-right-radius: 0.25rem;                                    border-top-left-radius: 0.375rem;                                  border-bottom-right-radius: 0;"`
+      `"@media (min-width: 640px) {      color: #000;      }"`
     );
   });
 });
