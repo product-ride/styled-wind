@@ -183,7 +183,33 @@ export class CSSGen {
     'font-serif':
       'font-family: Georgia, Cambria, "Times New Roman", Times, serif;',
     'font-mono':
-      'font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;'
+      'font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;',
+    'list-none': 'list-style-type: none',
+    'list-disc': 'list-style-type: disc',
+    'list-decimal': 'list-style-type: decimal',
+    'list-inside': 'list-style-position: inside;',
+    'list-outside': 'list-style-position: outside;',
+    'text-left': 'text-align: left;',
+    'text-center': 'text-align: center;',
+    'text-right': 'text-align: right;',
+    'text-justify': 'text-align: justify;',
+    'align-baseline': 'vertical-align: baseline;',
+    'align-top': 'vertical-align: top;',
+    'align-middle': 'vertical-align: middle;',
+    'align-bottom': 'vertical-align: bottom;',
+    'align-text-top': 'vertical-align: text-top;',
+    'align-text-bottom': 'vertical-align: text-bottom;',
+    'whitespace-normal': 'white-space: normal;',
+    'whitespace-no-wrap': 'white-space: nowrap;',
+    'whitespace-pre': 'white-space: pre;',
+    'whitespace-pre-line': 'white-space: pre-line;',
+    'whitespace-pre-wrap': 'white-space: pre-wrap;',
+    'resize-none': 'resize: none;',
+    'resize-y': 'resize: vertical;',
+    'resize-x': 'resize: horizontal;',
+    resize: 'resize: both;',
+    'fill-current': 'fill: currentColor',
+    'stroke-current': 'stroke: currentColor;'
   };
 
   private staticPropertyClasses = [
@@ -207,8 +233,13 @@ export class CSSGen {
     TEXT_COLOR: /text-(.*)/,
     TEXT_SIZE: /text-(xs|sm|base|lg|[0-9]xl)/,
     TEXT_WEIGHT: /font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)/,
+    TEXT_OPACITY: /text-opacity-[0-9]/,
     PLACEHOLDER_COLOR: /placeholder-(.*)/,
-    STROKE: /stroke-[0-9]/
+    PLACEHOLDER_OPACITY: /placeholder-opacity-[0-9]/,
+    STROKE: /stroke-[0-9]/,
+    LETTER_SPACING: /tracking-(tighter|tight|normal|wide|wider|widest)/,
+    LINE_HEIGHT: /leading-(.*)/,
+    OPACITY: /opacity-[0-9]/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -348,6 +379,13 @@ export class CSSGen {
           const fontWeight = this.config.theme.fontWeight[weight];
 
           return `font-weight: ${fontWeight}`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER_OPACITY)
+        ) {
+          const [, , opacity] = className.split('-');
+          const opacityValue = parseInt(opacity) / 100;
+
+          return `--placeholder-opacity: ${opacityValue}`;
         } // for text-black, placeholder-black
         else if (
           className.match(this.dynamicPropertyClassesRegEx.TEXT_COLOR) ||
@@ -369,10 +407,36 @@ export class CSSGen {
 
             return `color: ${colorHex};`;
           }
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.LETTER_SPACING)
+        ) {
+          const [, spacing] = className.split('-');
+          const spacingValue = this.config.theme.letterSpacing[spacing];
+
+          return `letter-spacing: ${spacingValue}`;
         } else if (className.match(this.dynamicPropertyClassesRegEx.STROKE)) {
           const [, value] = className.split('-');
 
           return `stroke-width: ${value}`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.LINE_HEIGHT)
+        ) {
+          const [, height] = className.split('-');
+          const lineHeight = this.config.theme.lineHeight[height];
+
+          return `line-height: ${lineHeight}`;
+        } else if (className.match(this.dynamicPropertyClassesRegEx.OPACITY)) {
+          const [, opacity] = className.split('-');
+          const opacityValue = parseInt(opacity) / 100;
+
+          return `opacity: ${opacityValue}`;
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.TEXT_OPACITY)
+        ) {
+          const [, , opacity] = className.split('-');
+          const opacityValue = parseInt(opacity) / 100;
+
+          return `opacity: ${opacityValue}`;
         }
 
         return className;
