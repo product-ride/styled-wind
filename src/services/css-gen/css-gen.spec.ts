@@ -205,7 +205,7 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`
       Array [
         "grid-template-columns: repeat(8, minmax(0, 1fr));",
-        "grid-template-columns: none",
+        "grid-template-columns: none;",
       ]
     `);
   });
@@ -216,7 +216,7 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`
       Array [
         "grid-template-rows: repeat(8, minmax(0, 1fr));",
-        "grid-template-rows: none",
+        "grid-template-rows: none;",
       ]
     `);
   });
@@ -231,7 +231,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "grid-row: auto",
+        "grid-row: auto;",
         "grid-row: span 8 / span 8;",
         "grid-row-start: 2;",
         "grid-row-end: 5;",
@@ -249,7 +249,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "grid-col: auto",
+        "grid-col: auto;",
         "grid-col: span 8 / span 8;",
         "grid-col-start: 2;",
         "grid-col-end: 5;",
@@ -262,7 +262,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "gap: 4rem",
+        "gap: 4rem;",
       ]
     `);
   });
@@ -272,7 +272,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "row-gap: 2.5rem",
+        "row-gap: 2.5rem;",
       ]
     `);
   });
@@ -282,7 +282,7 @@ describe('CSSGen', () => {
 
     expect(css).toMatchInlineSnapshot(`
       Array [
-        "col-gap: 2.5rem",
+        "col-gap: 2.5rem;",
       ]
     `);
   });

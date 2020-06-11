@@ -510,7 +510,7 @@ export class CSSGen {
           const [, , templateValue] = className.split('-');
 
           if (templateValue.trim() === 'none') {
-            return 'grid-template-columns: none';
+            return 'grid-template-columns: none;';
           } else {
             return `grid-template-columns: repeat(${templateValue}, minmax(0, 1fr));`;
           }
@@ -520,7 +520,7 @@ export class CSSGen {
           const [, , templateValue] = className.split('-');
 
           if (templateValue.trim() === 'none') {
-            return 'grid-template-rows: none';
+            return 'grid-template-rows: none;';
           } else {
             return `grid-template-rows: repeat(${templateValue}, minmax(0, 1fr));`;
           }
@@ -530,7 +530,7 @@ export class CSSGen {
           if (props.length === 2) {
             const [, value] = props;
 
-            return value.trim() === 'auto' ? `grid-row: auto` : className;
+            return value.trim() === 'auto' ? `grid-row: auto;` : className;
           } else if (props.length === 3) {
             const [, type, value] = props;
 
@@ -546,7 +546,7 @@ export class CSSGen {
           if (props.length === 2) {
             const [, value] = props;
 
-            return value.trim() === 'auto' ? `grid-col: auto` : className;
+            return value.trim() === 'auto' ? `grid-col: auto;` : className;
           } else if (props.length === 3) {
             const [, type, value] = props;
 
@@ -560,21 +560,21 @@ export class CSSGen {
           const [, gap] = className.split('-');
           const gapValue = this.config.theme.gap[gap];
 
-          return `gap: ${gapValue}`;
+          return `gap: ${gapValue};`;
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.GRID_ROW_GAP)
         ) {
           const [, , gap] = className.split('-');
           const gapValue = this.config.theme.gap[gap];
 
-          return `row-gap: ${gapValue}`;
+          return `row-gap: ${gapValue};`;
         } else if (
           className.match(this.dynamicPropertyClassesRegEx.GRID_COL_GAP)
         ) {
           const [, , gap] = className.split('-');
           const gapValue = this.config.theme.gap[gap];
 
-          return `col-gap: ${gapValue}`;
+          return `col-gap: ${gapValue};`;
         }
 
         return className;
