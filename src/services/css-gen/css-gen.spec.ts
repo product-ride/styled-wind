@@ -118,4 +118,44 @@ describe('CSSGen', () => {
       ]
     `);
   });
+
+  it('should generate css for letter spacing', () => {
+    const css = cssGen.genCSS(['tracking-wider']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "letter-spacing: 0.05em",
+      ]
+    `);
+  });
+
+  it('should generate css for line height', () => {
+    const css = cssGen.genCSS(['leading-5']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "line-height: 1.25rem",
+      ]
+    `);
+  });
+
+  it('should generate css for opacity', () => {
+    const css = cssGen.genCSS(['opacity-25']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "opacity: 0.25",
+      ]
+    `);
+  });
+
+  it('should generate css for placeholder opacity', () => {
+    const css = cssGen.genCSS(['placeholder-opacity-25']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "--placeholder-opacity: 0.25",
+      ]
+    `);
+  });
 });
