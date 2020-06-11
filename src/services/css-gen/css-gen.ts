@@ -221,7 +221,9 @@ export class CSSGen {
     'grid-flow-row': 'grid-auto-flow: row;',
     'grid-flow-col': 'grid-auto-flow: column;',
     'grid-flow-row-dense': 'grid-auto-flow: row dense',
-    'grid-flow-col-dense': 'grid-auto-flow: column dense;'
+    'grid-flow-col-dense': 'grid-auto-flow: column dense;',
+    'table-auto': 'table-layout: auto;',
+    'table-fixed': 'table-layout: fixed;'
   };
 
   private staticPropertyClassesRegEx = {
