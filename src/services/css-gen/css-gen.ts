@@ -103,16 +103,27 @@ export class CSSGen {
     /left-(.*)/
   ];
 
-  private dynamicPropertyClasses = [
-    /m(.)?-(.*)/,
-    /p(.)?-(.*)/,
-    /scale-(.*)/,
-    /border-[0-9]/,
-    /border-(.*)-[0-9]/,
-    /text-(.*)/
-  ];
+  private dynamicPropertyClassesRegEx = {
+    MARGIN: /m(.)?-(.*)/,
+    PADDING: /p(.)?-(.*)/,
+    SCALE: /scale-(.*)/,
+    BORDER: /border-[0-9]/,
+    BORDER_WITH_DIRECTION: /border-(.*)-[0-9]/,
+    TEXT: /text-(.*)/,
+    PLACEHOLDER: /placeholder-(.*)/
+  };
 
-  private semiPropertyDynamicClasses = [/bg-(.*)/];
+  private dynamicPropertyClasses = Object.values(
+    this.dynamicPropertyClassesRegEx
+  );
+
+  private semiPropertyDynamicClassesReEx = {
+    BG: /bg-(.*)/
+  };
+
+  private semiPropertyDynamicClasses = Object.values(
+    this.semiPropertyDynamicClassesReEx
+  );
 
   constructor(config: any) {
     this.config = config;
@@ -162,116 +173,111 @@ export class CSSGen {
       );
 
       if (dyanmicPopertyClass) {
-        // switch based on the first letter whether it is m, p etc
-        switch (className[0]) {
-          case 'm': {
-            // TODO: don't use any, figure out why ts throws error without any
-            const [, direction, value] = className.match(
-              dyanmicPopertyClass
-            ) as any;
+        // scale
+        if (className.match(this.dynamicPropertyClassesRegEx.MARGIN)) {
+          const [, direction, value] = className.match(
+            dyanmicPopertyClass
+          ) as any;
 
-            const themeValue = this.config.theme.margin[value];
-            const directionStringorArray = this.expandDirectionChar(direction);
-            if (Array.isArray(directionStringorArray)) {
-              return directionStringorArray.reduce((prev, direction) => {
-                return `${prev}
+          const themeValue = this.config.theme.margin[value];
+          const directionStringorArray = this.expandDirectionChar(direction);
+          if (Array.isArray(directionStringorArray)) {
+            return directionStringorArray.reduce((prev, direction) => {
+              return `${prev}
                 margin${direction}: ${themeValue};
                 `;
-              }, '');
-            }
-
-            return `margin${directionStringorArray}: ${themeValue};`;
+            }, '');
           }
-          case 'p': {
-            const [, direction, value] = className.match(
-              dyanmicPopertyClass
-            ) as any;
 
-            // TODO: not sure how to use this.config.theme.spacing
-            const themeValue = this.config.theme.spacing[value];
+          return `margin${directionStringorArray}: ${themeValue};`;
+        } else if (className.match(this.dynamicPropertyClassesRegEx.PADDING)) {
+          const [, direction, value] = className.match(
+            dyanmicPopertyClass
+          ) as any;
+
+          const themeValue = this.config.theme.spacing[value];
+          const directionStringorArray = this.expandDirectionChar(direction);
+          if (Array.isArray(directionStringorArray)) {
+            return directionStringorArray.reduce((prev, direction) => {
+              return `${prev}
+                padding${direction}: ${themeValue};
+                `;
+            }, '');
+          }
+
+          return `padding${directionStringorArray}: ${themeValue};`;
+        } else if (className.match(this.dynamicPropertyClassesRegEx.SCALE)) {
+          const props = className.split('-');
+
+          // scale-10
+          if (props.length === 2) {
+            const [, valueString] = props;
+            const value = parseInt(valueString) / 100;
+
+            return `--transform-scale-x: ${value};
+                        --transform-scale-y: ${value};`;
+          }
+          // scale-x-0 or scale-y-100
+          else if (props.length === 3) {
+            const [, axis, valueString] = props;
+            const value = parseInt(valueString) / 100;
+
+            return `--transform-scale-${axis}: ${value};`;
+          }
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.BORDER) ||
+          className.match(
+            this.dynamicPropertyClassesRegEx.BORDER_WITH_DIRECTION
+          )
+        ) {
+          const props = className.split('-');
+
+          // border-10
+          if (props.length === 2) {
+            const [, valueString] = props;
+            const value = `${parseInt(valueString)}px`;
+
+            return `border-width: ${value};`;
+          }
+          // border-t-10 or border-b-100
+          else if (props.length === 3) {
+            const [, direction, valueString] = props;
+            const value = `${parseInt(valueString)}px`;
             const directionStringorArray = this.expandDirectionChar(direction);
             if (Array.isArray(directionStringorArray)) {
               return directionStringorArray.reduce((prev, direction) => {
                 return `${prev}
-                padding${direction}: ${themeValue};
+                    border${direction}-width: ${value};
                 `;
               }, '');
             }
 
-            return `padding${directionStringorArray}: ${themeValue};`;
+            return `border${directionStringorArray}-width: ${value};`;
           }
-          default: {
-            // scale
-            if (className.startsWith('scale')) {
-              const props = className.split('-');
+          // for text-black, placeholder-black
+        } else if (
+          className.match(this.dynamicPropertyClassesRegEx.TEXT) ||
+          className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER)
+        ) {
+          const props = className.split('-');
 
-              // scale-10
-              if (props.length === 2) {
-                const [, valueString] = props;
-                const value = parseInt(valueString) / 100;
+          // text-black, text-trasparent
+          if (props.length === 2) {
+            const [, colorString] = props;
+            const colorHex = this.config.theme.colors[colorString];
 
-                return `--transform-scale-x: ${value};
-                        --transform-scale-y: ${value};`;
-              }
-              // scale-x-0 or scale-y-100
-              else if (props.length === 3) {
-                const [, axis, valueString] = props;
-                const value = parseInt(valueString) / 100;
+            return `color: ${colorHex};`;
+          }
+          // border-t-10 or border-b-100
+          else if (props.length === 3) {
+            const [, colorString, contrast] = props;
+            const colorHex = this.config.theme.colors[colorString][contrast];
 
-                return `--transform-scale-${axis}: ${value};`;
-              }
-            } else if (className.startsWith('border')) {
-              const props = className.split('-');
-
-              // border-10
-              if (props.length === 2) {
-                const [, valueString] = props;
-                const value = `${parseInt(valueString)}px`;
-
-                return `border-width: ${value};`;
-              }
-              // border-t-10 or border-b-100
-              else if (props.length === 3) {
-                const [, direction, valueString] = props;
-                const value = `${parseInt(valueString)}px`;
-                const directionStringorArray = this.expandDirectionChar(
-                  direction
-                );
-                if (Array.isArray(directionStringorArray)) {
-                  return directionStringorArray.reduce((prev, direction) => {
-                    return `${prev}
-                    border${direction}-width: ${value};
-                `;
-                  }, '');
-                }
-
-                return `border${directionStringorArray}-width: ${value};`;
-              }
-              // for text-black, placeholder-black
-            } else if (className.startsWith('text')) {
-              const props = className.split('-');
-
-              // text-black, text-trasparent
-              if (props.length === 2) {
-                const [, colorString] = props;
-                const colorHex = this.config.theme.colors[colorString];
-
-                return `color: ${colorHex};`;
-              }
-              // border-t-10 or border-b-100
-              else if (props.length === 3) {
-                const [, colorString, contrast] = props;
-                const colorHex = this.config.theme.colors[colorString][
-                  contrast
-                ];
-
-                return `color: ${colorHex};`;
-              }
-            }
-
-            return className;
+            return `color: ${colorHex};`;
           }
         }
+
+        return className;
       } else {
         return className;
       }

@@ -89,4 +89,15 @@ describe('CSSGen', () => {
       ]
     `);
   });
+
+  it('should generate css for placeholder', () => {
+    const css = cssGen.genCSS(['placeholder-black', 'placeholder-red-500']);
+
+    expect(css).toMatchInlineSnapshot(`
+      Array [
+        "color: #000;",
+        "color: #f56565;",
+      ]
+    `);
+  });
 });
