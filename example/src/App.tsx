@@ -8,7 +8,7 @@ interface ContainerProps {
 const Container = styled.div<ContainerProps>`
                   .bg-red-600;
                   .p-10;
-                  .hover:bg-green-900;
+                  .hover: bg-green-900;
                   .rounded-lg;
                   .md:bg-purple-900;
                   .bg-cyan;
@@ -17,7 +17,7 @@ const Container = styled.div<ContainerProps>`
 
 const Banner = styled(Container)`
   margin-top: ${(props: any) => props.margin};
-  //  .text-yellow-900;
+  .text-yellow-900;
 `;
 const Input = styled.input.attrs(() => ({
   type: 'email',
