@@ -16,8 +16,8 @@ const Container = styled.div<ContainerProps>`
                   `;
 
 const Banner = styled(Container)`
+  .text-red-600;
   margin-top: ${(props: any) => props.margin};
-  .text-yellow-900;
 `;
 const Input = styled.input.attrs(() => ({
   type: 'email',

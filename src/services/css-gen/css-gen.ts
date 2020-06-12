@@ -442,7 +442,7 @@ export class CSSGen {
           color: ${colorHex};
           }`;
         }
-        // border-t-10 or border-b-100
+        // text-red-100, text-green-200
         else if (props.length === 3) {
           const [textOrPlaceholder, colorString, contrast] = props;
           const colorHex = this.config.theme.colors[colorString][contrast];
