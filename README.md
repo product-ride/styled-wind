@@ -2,9 +2,14 @@
 
 > A magical implementation of tailwind-like classnames into styled-components.
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/product-ride/styled-wind/styled-wind-ci?style=flat-square)
+![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)
+![Jest](https://img.shields.io/badge/tested%20with-jest-blue?style=flat-square)
+
 ## What is styled wind?
 
 Styled-wind is a CSS-in-JS library, written on top of styled-components. It inherits everything from styled-components and also gives you the flexibility to use tailwind classnames along with styled-components.
+[Read the docs](https://styled-wind.netlify.app/) to know more.
 
 ## Motivation
 
@@ -84,9 +89,17 @@ Basic knowledge of [styled-components](https://styled-components.com/) and [tail
 - No support for variants as we find no dominant use case in component world
 - Please report if you happen to find any issues.
 
+## Examples
+
+Check out the [CodeSandBox](https://codesandbox.io/s/styled-wind-demo-p3v44?file=/src/App.tsx) to see styled-wind in use.
+
 ## Community
 
 The creators of the library are always open to discussions/suggestions. Their twitter accounts:
 
 - Ameer Jhan [Twitter](https://twitter.com/ameerthehacker)
 - Vilva Athiban [Twitter](https://twitter.com/vilvaathibanpb)
+
+## License
+
+MIT © [Product Ride](http://productride.com/)

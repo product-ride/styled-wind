@@ -1,4 +1,4 @@
-import last from 'lodash/last';
+import last from 'lodash-es/last';
 import { warn } from '../../utils/utils';
 
 export class CSSGen {
