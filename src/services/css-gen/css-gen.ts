@@ -419,7 +419,9 @@ export class CSSGen {
         const [, , opacity] = styledClassName.split('-');
         const opacityValue = parseInt(opacity) / 100;
 
-        return `--placeholder-opacity: ${opacityValue};`;
+        return `::placeholder {
+        opacity: ${opacityValue};
+        }`;
       } // for text-black, placeholder-black
       else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.TEXT_COLOR) ||
@@ -441,7 +443,9 @@ export class CSSGen {
           const [, colorString, contrast] = props;
           const colorHex = this.config.theme.colors[colorString][contrast];
 
-          return `color: ${colorHex};`;
+          return `::placeholder {
+          color: ${colorHex};
+          }`;
         }
       } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.LETTER_SPACING)

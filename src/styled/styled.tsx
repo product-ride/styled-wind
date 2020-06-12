@@ -56,7 +56,7 @@ domElements.forEach((domElement) => {
   const proxyMethod = (target: any, handler: ProxyHandler<any>) => {
     return new Proxy(target, {
       apply(attrTarget, thisArgs, args) {
-        const attrsFn = attrTarget.apply(thisArgs, ...args);
+        const attrsFn = attrTarget.apply(thisArgs, args);
 
         return new Proxy(attrsFn, handler);
       }

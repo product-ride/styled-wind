@@ -47,13 +47,17 @@ describe('CSSGen', () => {
   it('should generate css for text-color', () => {
     const css = cssGen.genCSS(['.text-black', '.text-red-500']);
 
-    expect(css).toMatchInlineSnapshot(`"color: #000;color: #f56565;"`);
+    expect(css).toMatchInlineSnapshot(
+      `"color: #000;::placeholder {          color: #f56565;          }"`
+    );
   });
 
   it('should generate css for placeholder', () => {
     const css = cssGen.genCSS(['.placeholder-black', '.placeholder-red-500']);
 
-    expect(css).toMatchInlineSnapshot(`"color: #000;color: #f56565;"`);
+    expect(css).toMatchInlineSnapshot(
+      `"color: #000;::placeholder {          color: #f56565;          }"`
+    );
   });
 
   it('should generate css for stroke', () => {
@@ -95,7 +99,9 @@ describe('CSSGen', () => {
   it('should generate css for placeholder opacity', () => {
     const css = cssGen.genCSS(['.placeholder-opacity-25']);
 
-    expect(css).toMatchInlineSnapshot(`"--placeholder-opacity: 0.25;"`);
+    expect(css).toMatchInlineSnapshot(
+      `"::placeholder {        opacity: 0.25;        }"`
+    );
   });
 
   it('should generate css for border opacity', () => {
