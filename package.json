@@ -1,6 +1,6 @@
 {
   "name": "styled-wind",
-  "version": "1.0.0",
+  "version": "0.0.0-beta.0",
   "description": "Use tailwind like classess in styled components",
   "author": "ameerthehacker",
   "license": "MIT",
@@ -24,7 +24,8 @@
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
     "prettify": "prettier --write",
-    "predeploy": "cd example && npm install && npm run build"
+    "predeploy": "cd example && npm install && npm run build",
+    "public-beta": ""
   },
   "jest": {
     "snapshotSerializers": [
