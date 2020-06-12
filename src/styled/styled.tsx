@@ -8,7 +8,10 @@ type StyledFn = (
   ...expressions: string[]
 ) => string;
 
-const config = generateStylesJS({});
+const windowObj: any = window;
+const customConfig = windowObj?.__STYLED_WIND_CUSTOM_CONFIG__ || {};
+
+const config = generateStylesJS(customConfig);
 const cssGen = new CSSGen(config);
 
 const getHydratedTemplateString = (strings: TemplateStringsArray) => {
