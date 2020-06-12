@@ -19,7 +19,7 @@
     "@types/react-dom": "file:../node_modules/@types/react-dom",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
-    "react-scripts": "file:../node_modules/react-scripts",
+    "react-scripts": "^3.4.1",
     "styled-components": "^5.1.1",
     "styled-tw": "file:..",
     "typescript": "file:../node_modules/typescript"
