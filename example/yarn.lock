@@ -10019,8 +10019,10 @@ styled-components@^5.1.1:
     shallowequal "^1.1.0"
     supports-color "^5.5.0"
 
-"styled-wind@file:..":
-  version "1.0.0"
+styled-wind@^0.0.0-beta.1:
+  version "0.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/styled-wind/-/styled-wind-0.0.0-beta.1.tgz#cb8fd04e324d14db37cf98a3f6a9e8098591b378"
+  integrity sha512-rS/lTR+PDV2FLTVREcxlD2hdT8Htcvgaw8kbRkOV34QmfO+0GOnhfz37JGwfQWiWZZVnp1+mT0Gc62+2Rwialw==
   dependencies:
     lodash "^4.17.15"
     reduce-css-calc "^2.1.7"

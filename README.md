@@ -91,7 +91,7 @@ Basic knowledge of [styled-components](https://styled-components.com/) and [tail
 
 ## Examples
 
-Check out the [CodeSandBox](https://codesandbox.io/s/styled-wind-demo-p3v44?file=/src/App.tsx) to see styled-wind in use.
+Check out the [CodeSandBox](https://codesandbox.io/s/styled-wind-demo-hxmsi?file=/src/App.js) to see styled-wind in use.
 
 ## Community
 
