@@ -271,19 +271,12 @@ export class CSSGen {
     GRID_GAP: /^gap-[0-9]/,
     GRID_ROW_GAP: /^row-gap-[0-9]/,
     GRID_COL_GAP: /^col-gap-[0-9]/,
-    BORDER_RADIUS: /^(rounded$|(rounded-(.*)$)|(rounded-(.*)-(.*)))/
+    BORDER_RADIUS: /^(rounded$|(rounded-(.*)$)|(rounded-(.*)-(.*)))/,
+    BG: /bg-(.*)/
   };
 
   private dynamicPropertyClasses = Object.values(
     this.dynamicPropertyClassesRegEx
-  );
-
-  private semiPropertyDynamicClassesReEx = {
-    BG: /bg-(.*)/
-  };
-
-  private semiPropertyDynamicClasses = Object.values(
-    this.semiPropertyDynamicClassesReEx
   );
 
   constructor(config: any) {
@@ -291,7 +284,7 @@ export class CSSGen {
   }
 
   // classes like clearfix, word-wrap etc.
-  private hydrateCustomClasses(classes: string[]) {
+  private hydreateStaticClasses(classes: string[]) {
     const hydratedCSS: string[] = classes.map(
       (className) => this.staticClasses[className] || className
     );
@@ -660,30 +653,11 @@ export class CSSGen {
           } else {
             return className;
           }
-        }
-
-        return className;
-      } else {
-        return className;
-      }
-    });
-
-    return hydratedCSS;
-  }
-
-  // classes like bg-red, bg-green
-  private hydrateSemiPropertyDynamicClasses(classes: string[]) {
-    const hydratedCSS = classes.map((className) => {
-      const semiPropertyDynamicClass = this.semiPropertyDynamicClasses.find(
-        (semiPropertyDynamicClass) => semiPropertyDynamicClass.test(className)
-      );
-
-      if (semiPropertyDynamicClass) {
-        if (className.startsWith('bg-')) {
+        } else if (className.match(this.dynamicPropertyClassesRegEx.BG)) {
           // color => red-500;
-          const [, color] = className.match(semiPropertyDynamicClass) as any;
-          const [colorName, contrast] = color.split('-');
+          const [, colorName, contrast] = className.split('-');
           let themeColor;
+
           if (contrast) {
             themeColor = this.config.theme.colors[colorName][contrast];
           } else {
@@ -691,9 +665,9 @@ export class CSSGen {
           }
 
           return `background: ${themeColor};`;
-        } else {
-          return className;
         }
+
+        return className;
       } else {
         return className;
       }
@@ -723,18 +697,15 @@ export class CSSGen {
   }
 
   private hydrateNormalClasses(classes: string[]): string {
-    const withCustomClasses = this.hydrateCustomClasses(classes);
+    const withCustomClasses = this.hydreateStaticClasses(classes);
     const withPropertyValueClasses = this.hydratePropertyValueClasess(
       withCustomClasses
     );
     const withDyanmicValueClasses = this.hydrateDynamicPropertyClasses(
       withPropertyValueClasses
     );
-    const withSemiDynamicClasses = this.hydrateSemiPropertyDynamicClasses(
-      withDyanmicValueClasses
-    );
 
-    return withSemiDynamicClasses.join('');
+    return withDyanmicValueClasses.join('');
   }
 
   private hydratePseudoClasses(classes: string[]) {
