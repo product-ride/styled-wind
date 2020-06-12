@@ -18,7 +18,7 @@ const getHydratedTemplateString = (strings: TemplateStringsArray) => {
   const sanitizedStyles = strings.map((stringsPart) => {
     const classes = stringsPart.split(';');
     /*
-      This is to hande the following casse
+      This is to handle the following case
 
       margin-top: ${(props: any) => props.margin};
      .text-yellow-900;
