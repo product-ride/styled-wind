@@ -433,17 +433,23 @@ export class CSSGen {
 
         // text-black, text-trasparent
         if (props.length === 2) {
-          const [, colorString] = props;
+          const [textOrPlaceholder, colorString] = props;
           const colorHex = this.config.theme.colors[colorString];
 
-          return `color: ${colorHex};`;
+          return textOrPlaceholder === 'text'
+            ? `color: ${colorHex};`
+            : `::placeholder {
+          color: ${colorHex};
+          }`;
         }
         // border-t-10 or border-b-100
         else if (props.length === 3) {
-          const [, colorString, contrast] = props;
+          const [textOrPlaceholder, colorString, contrast] = props;
           const colorHex = this.config.theme.colors[colorString][contrast];
 
-          return `::placeholder {
+          return textOrPlaceholder === 'text'
+            ? `color: ${colorHex};`
+            : `::placeholder {
           color: ${colorHex};
           }`;
         }
@@ -756,7 +762,9 @@ export class CSSGen {
 
     switch (prefix.trim()) {
       case 'hover': {
-        const hydratedHoverClasses = this.hydrateNormalClasses(`.${className}`);
+        const hydratedHoverClasses = this.hydrateNormalClasses(
+          `.${className.trim()}`
+        );
 
         return `&:hover {
         ${hydratedHoverClasses}
@@ -764,7 +772,7 @@ export class CSSGen {
       }
       case 'active': {
         const hydratedActiveClasses = this.hydrateNormalClasses(
-          `.${className}`
+          `.${className.trim()}`
         );
 
         return `&:active {
@@ -772,21 +780,27 @@ export class CSSGen {
         }`;
       }
       case 'sm': {
-        const hydratedSmClasses = this.hydrateNormalClasses(`.${className}`);
+        const hydratedSmClasses = this.hydrateNormalClasses(
+          `.${className.trim()}`
+        );
 
         return `@media (min-width: ${sm}) {
         ${hydratedSmClasses}
         }`;
       }
       case 'lg': {
-        const hydratedMdClasses = this.hydrateNormalClasses(`.${className}`);
+        const hydratedMdClasses = this.hydrateNormalClasses(
+          `.${className.trim()}`
+        );
 
         return `@media (min-width: ${md}) {
         ${hydratedMdClasses}
         }`;
       }
       case 'md': {
-        const hydrateLgClasses = this.hydrateNormalClasses(`.${className}`);
+        const hydrateLgClasses = this.hydrateNormalClasses(
+          `.${className.trim()}`
+        );
 
         return `@media (min-width: ${lg}) {
         ${hydrateLgClasses}
