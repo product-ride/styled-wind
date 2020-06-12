@@ -14,15 +14,16 @@ const Banner = styled(Container)`
   margin-top: ${(props: any) => props.margin};
   //  .text-yellow-900;
 `;
-const Input = styled.div.withConfig({}).attrs(() => ({
-  type: 'password'
-}))`.text-red-900;`;
+const Input = styled.input.attrs(() => ({
+  type: 'email',
+  placeholder: 'hey man!'
+}))`.placeholder-red-900;`;
 
 const App = () => {
   return (
     <>
       <Banner margin='200px'>hello</Banner>
-      <Input>helo</Input>
+      <Input />
     </>
   );
 };
