@@ -38,7 +38,7 @@ const getHydratedTemplateString = (strings: TemplateStringsArray) => {
   return sanitizedStyles.map((sanitizedStyle) => {
     return sanitizedStyle.map((style) => {
       if (style.trim().startsWith('.')) {
-        return cssGen.genCSS([style.trim().substr(1)]).trim();
+        return cssGen.genCSS(style.trim()).trim();
       } else {
         return style;
       }
