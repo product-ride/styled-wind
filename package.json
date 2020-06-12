@@ -12,7 +12,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
+    "build": "node ./scripts/build.js",
+    "build-lib": "microbundle-crl --no-compress --format modern,cjs",
     "gen-type-declaration": "tsc src/index.tsx --emitDeclarationOnly --declaration",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepare": "run-s build",
@@ -68,6 +69,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
+    "shelljs": "^0.8.4",
     "typescript": "^3.7.5"
   },
   "lint-staged": {
@@ -84,7 +86,10 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "images",
+    "package.json"
   ],
   "dependencies": {
     "lodash": "^4.17.15",
