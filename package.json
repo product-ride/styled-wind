@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "microbundle-crl --no-compress --format modern,cjs",
+    "gen-type-declaration": "tsc src/index.tsx --emitDeclarationOnly --declaration",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepare": "run-s build",
     "test": "run-s test:unit test:lint test:build",
@@ -24,17 +25,26 @@
     "prettify": "prettier --write",
     "predeploy": "cd example && npm install && npm run build"
   },
+  "jest": {
+    "snapshotSerializers": [
+      "<rootDir>/snapshot-serializer"
+    ]
+  },
+  "types": "dist/index.d.ts",
   "peerDependencies": {
-    "react": "^16.0.0"
+    "react": "^16.0.0",
+    "styled-components": "^5.1.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^25.1.4",
+    "@types/lodash": "^4.14.155",
     "@types/node": "^12.12.38",
     "@types/react": "^16.9.27",
     "@types/react-dom": "^16.9.7",
+    "@types/styled-components": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
     "babel-eslint": "^10.0.3",
@@ -54,6 +64,7 @@
     "microbundle-crl": "^0.13.10",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
+    "pretty-format": "^26.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
@@ -74,5 +85,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "reduce-css-calc": "^2.1.7"
+  }
 }

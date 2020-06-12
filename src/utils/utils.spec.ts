@@ -1,5 +1,4 @@
-import { DEFAULT_THEME } from '../theme/default';
-import { warn, getColor } from './utils';
+import { warn } from './utils';
 import { name } from '../../package.json';
 
 describe('Utils', () => {
@@ -16,16 +15,6 @@ describe('Utils', () => {
       warn(message);
 
       expect(console.warn).toHaveBeenCalledWith(expectedMessage);
-    });
-  });
-
-  describe('getColor()', () => {
-    it('should return the color hex value from theme', () => {
-      const red900Hex = DEFAULT_THEME.colors.red['900'];
-
-      const colorHex = getColor(DEFAULT_THEME, 'red-900');
-
-      expect(colorHex).toBe(red900Hex);
     });
   });
 });

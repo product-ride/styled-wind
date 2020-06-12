@@ -1,2 +1,3 @@
-export * from './contexts/theme/theme-context';
-export * from './hooks/use-theme/use-theme';
+import styledWrapper from './styled/styled';
+
+export default styledWrapper;
