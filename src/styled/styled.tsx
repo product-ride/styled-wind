@@ -3,11 +3,6 @@ import styled, { AnyStyledComponent } from 'styled-components';
 import { CSSGen } from '../services/css-gen/css-gen';
 import generateStylesJS from '../utils/generateStylesJS';
 
-type StyledFn = (
-  strings: TemplateStringsArray,
-  ...expressions: string[]
-) => string;
-
 const windowObj: any = window;
 const customConfig = windowObj?.__STYLED_WIND_CUSTOM_CONFIG__ || {};
 
@@ -46,15 +41,6 @@ const getHydratedTemplateString = (strings: TemplateStringsArray) => {
   }) as any;
 };
 
-const genStyledFn = (el: string): StyledFn => (
-  strings: TemplateStringsArray,
-  ...expressions: string[]
-) => {
-  const hydratedTemplateString = getHydratedTemplateString(strings);
-
-  return styled[el](hydratedTemplateString, ...expressions);
-};
-
 const styledWrapper:
   | Record<DOMElement, string>
   | ((tag: AnyStyledComponent) => any) = (tag: AnyStyledComponent) => (
@@ -67,7 +53,63 @@ const styledWrapper:
 };
 
 domElements.forEach((domElement) => {
-  styledWrapper[domElement] = genStyledFn(domElement);
+  const proxyMethod = (target: any, handler: ProxyHandler<any>) => {
+    return new Proxy(target, {
+      apply(attrTarget, thisArgs, args) {
+        const attrsFn = attrTarget.apply(thisArgs, ...args);
+
+        return new Proxy(attrsFn, handler);
+      }
+    });
+  };
+
+  styledWrapper[domElement] = new Proxy(styled[domElement], {
+    apply(target: any, thisArg: any, args: any[]): any {
+      const [strings, expressions] = args;
+      const hydratedTemplateString = getHydratedTemplateString(strings);
+
+      return target.apply(thisArg, [hydratedTemplateString, expressions]);
+    },
+    get(target: any, attr: string) {
+      if (attr === 'attrs') {
+        return proxyMethod(target.attrs, {
+          apply: (attrsFnTarget: any, thisArg, args) => {
+            const [strings, expressions] = args;
+            const hydratedTemplateString = getHydratedTemplateString(strings);
+
+            return attrsFnTarget.apply(thisArg, [
+              hydratedTemplateString,
+              expressions
+            ]);
+          }
+        });
+      } else if (attr === 'withConfig') {
+        return proxyMethod(target.withConfig, {
+          get(target: any, attr: string): any {
+            if (attr === 'attrs') {
+              return proxyMethod(target.attrs, {
+                apply(target: any, thisArg: any, args: any[]): any {
+                  const [strings, expressions] = args;
+                  const hydratedTemplateString = getHydratedTemplateString(
+                    strings
+                  );
+
+                  return target.apply(thisArg, [
+                    hydratedTemplateString,
+                    expressions
+                  ]);
+                }
+              });
+            } else {
+              return target[attr];
+            }
+          }
+        });
+      }
+
+      return target[attr];
+    }
+  });
 });
 
 export default styledWrapper;
