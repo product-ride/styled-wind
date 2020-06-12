@@ -683,7 +683,12 @@ export class CSSGen {
           // color => red-500;
           const [, color] = className.match(semiPropertyDynamicClass) as any;
           const [colorName, contrast] = color.split('-');
-          const themeColor = this.config.theme.colors[colorName][contrast];
+          let themeColor;
+          if (contrast) {
+            themeColor = this.config.theme.colors[colorName][contrast];
+          } else {
+            themeColor = this.config.theme.colors[colorName];
+          }
 
           return `background: ${themeColor};`;
         } else {
