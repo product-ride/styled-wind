@@ -84,12 +84,6 @@ Basic knowledge of [styled-components](https://styled-components.com/) and [tail
 - No support for variants as we find no dominant use case in component world
 - Please report if you happen to find any issues.
 
-## Examples
-
-<!-- Add code sandbox like: TODO -->
-
-Check out the [CodeSandBox](https://github.com/docsifyjs/awesome-docsify#showcase) to see styled-wind in use.
-
 ## Community
 
 The creators of the library are always open to discussions/suggestions. Their twitter accounts:
