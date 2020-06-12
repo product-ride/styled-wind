@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-tw';
+import styled from 'styled-wind';
 
 interface ContainerProps {
   margin: string;

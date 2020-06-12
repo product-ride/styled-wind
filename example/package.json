@@ -1,5 +1,5 @@
 {
-  "name": "styled-tw-example",
+  "name": "styled-wind-example",
   "homepage": ".",
   "version": "0.0.0",
   "private": true,
@@ -21,7 +21,7 @@
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "^3.4.1",
     "styled-components": "^5.1.1",
-    "styled-tw": "file:..",
+    "styled-wind": "file:..",
     "typescript": "file:../node_modules/typescript"
   },
   "devDependencies": {
