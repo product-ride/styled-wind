@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-tw';
 
-const Container = styled.div`
+interface ContainerProps {
+  margin: string;
+}
+
+const Container = styled.div<ContainerProps>`
                   .bg-red-600;
                   .p-10;
                   .hover:bg-green-900;
@@ -10,6 +14,7 @@ const Container = styled.div`
                   .bg-cyan;
                   .mt-96;
                   `;
+
 const Banner = styled(Container)`
   margin-top: ${(props: any) => props.margin};
   //  .text-yellow-900;
