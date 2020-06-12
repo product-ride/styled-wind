@@ -30,6 +30,9 @@
   "jest": {
     "snapshotSerializers": [
       "<rootDir>/snapshot-serializer"
+    ],
+    "transformIgnorePatterns": [
+      "/!node_modules\\/lodash-es/"
     ]
   },
   "types": "dist/index.d.ts",
