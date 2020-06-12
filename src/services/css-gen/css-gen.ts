@@ -239,6 +239,10 @@ export class CSSGen {
     clear: /^clear-(.*)/
   };
 
+  private isStyleWindClass(classNameOrStyle: string) {
+    return classNameOrStyle.trim().startsWith('.');
+  }
+
   private staticPropertyClasses = Object.values(
     this.staticPropertyClassesRegEx
   );
@@ -284,396 +288,409 @@ export class CSSGen {
   }
 
   // classes like clearfix, word-wrap etc.
-  private hydreateStaticClasses(classes: string[]) {
-    const hydratedCSS: string[] = classes.map(
-      (className) => this.staticClasses[className] || className
-    );
-
-    return hydratedCSS;
+  private hydrateStaticClasses(className: string) {
+    return this.staticClasses[this.getClassName(className)] || className;
   }
 
   // float-left => flat: left;
   // overflow-x-hidden => overflow-x: hidden;
-  private hydratePropertyValueClasess(classes: string[]) {
-    const hydratedCSS = classes.map((className) => {
-      const propertyValueClass = this.staticPropertyClasses.find(
-        (propertyValueClass) => propertyValueClass.test(className)
-      );
+  private hydratePropertyValueClasess(className: string) {
+    const styledClassName = this.getClassName(className);
+    const propertyValueClass = this.staticPropertyClasses.find(
+      (propertyValueClass) => propertyValueClass.test(styledClassName)
+    );
 
-      if (propertyValueClass) {
-        // overflow-x-hidden
-        // property = overflow, valueWithProperty => x-hidden;
-        const [property, ...valueWithProperty] = className.split('-');
-        // allProprty = overflow-x
-        const allProperties = [
-          property,
-          ...valueWithProperty.slice(0, valueWithProperty.length - 1)
-        ].join('-');
+    if (propertyValueClass) {
+      // overflow-x-hidden
+      // property = overflow, valueWithProperty => x-hidden;
+      const [property, ...valueWithProperty] = styledClassName.split('-');
+      // allProprty = overflow-x
+      const allProperties = [
+        property,
+        ...valueWithProperty.slice(0, valueWithProperty.length - 1)
+      ].join('-');
 
-        return `${allProperties}: ${last(valueWithProperty)};`;
-      } else {
-        return className;
-      }
-    });
-
-    return hydratedCSS;
+      return `${allProperties}: ${last(valueWithProperty)};`;
+    } else {
+      return className;
+    }
   }
 
   // mt-10, m-10, p-10, pb-10
-  private hydrateDynamicPropertyClasses(classes: string[]) {
-    const hydratedCSS = classes.map((className) => {
-      const dyanmicPopertyClass = this.dynamicPropertyClasses.find(
-        (dynamicPropertyClass) => dynamicPropertyClass.test(className)
-      );
+  private hydrateDynamicPropertyClasses(className: string) {
+    const styledClassName = this.getClassName(className);
 
-      if (dyanmicPopertyClass) {
-        // scale
-        if (className.match(this.dynamicPropertyClassesRegEx.MARGIN)) {
-          const [, direction, value] = className.match(
-            dyanmicPopertyClass
-          ) as any;
+    const dyanmicPopertyClass = this.dynamicPropertyClasses.find(
+      (dynamicPropertyClass) => dynamicPropertyClass.test(styledClassName)
+    );
 
-          const themeValue = this.config.theme.margin[value];
-          const directionStringorArray = this.expandDirectionChar(direction);
-          if (Array.isArray(directionStringorArray)) {
-            return directionStringorArray.reduce((prev, direction) => {
-              return `${prev}
+    if (dyanmicPopertyClass) {
+      // scale
+      if (styledClassName.match(this.dynamicPropertyClassesRegEx.MARGIN)) {
+        const [, direction, value] = styledClassName.match(
+          dyanmicPopertyClass
+        ) as any;
+
+        const themeValue = this.config.theme.margin[value];
+        const directionStringorArray = this.expandDirectionChar(direction);
+        if (Array.isArray(directionStringorArray)) {
+          return directionStringorArray.reduce((prev, direction) => {
+            return `${prev}
                 margin${direction}: ${themeValue};
                 `;
-            }, '');
-          }
+          }, '');
+        }
 
-          return `margin${directionStringorArray}: ${themeValue};`;
-        } else if (className.match(this.dynamicPropertyClassesRegEx.PADDING)) {
-          const [, direction, value] = className.match(
-            dyanmicPopertyClass
-          ) as any;
+        return `margin${directionStringorArray}: ${themeValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.PADDING)
+      ) {
+        const [, direction, value] = styledClassName.match(
+          dyanmicPopertyClass
+        ) as any;
 
-          const themeValue = this.config.theme.spacing[value];
+        const themeValue = this.config.theme.spacing[value];
+        const directionStringorArray = this.expandDirectionChar(direction);
+        if (Array.isArray(directionStringorArray)) {
+          return directionStringorArray.reduce((prev, direction) => {
+            return `${prev}
+                padding${direction}: ${themeValue};
+                `;
+          }, '');
+        }
+
+        return `padding${directionStringorArray}: ${themeValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.BORDER_OPACITY)
+      ) {
+        const [, , opacity] = styledClassName.split('-');
+        const opacityValue = parseInt(opacity) / 100;
+
+        return `--border-opacity: ${opacityValue}`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.BORDER) ||
+        styledClassName.match(
+          this.dynamicPropertyClassesRegEx.BORDER_WITH_DIRECTION
+        )
+      ) {
+        const props = styledClassName.split('-');
+
+        // border-10
+        if (props.length === 2) {
+          const [, valueString] = props;
+          const value = `${parseInt(valueString)}px`;
+
+          return `border-width: ${value};`;
+        }
+        // border-t-10 or border-b-100
+        else if (props.length === 3) {
+          const [, direction, valueString] = props;
+          const value = `${parseInt(valueString)}px`;
           const directionStringorArray = this.expandDirectionChar(direction);
           if (Array.isArray(directionStringorArray)) {
             return directionStringorArray.reduce((prev, direction) => {
               return `${prev}
-                padding${direction}: ${themeValue};
+                    border${direction}-width: ${value};
                 `;
             }, '');
           }
 
-          return `padding${directionStringorArray}: ${themeValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.BORDER_OPACITY)
-        ) {
-          const [, , opacity] = className.split('-');
-          const opacityValue = parseInt(opacity) / 100;
+          return `border${directionStringorArray}-width: ${value};`;
+        }
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.TEXT_SIZE)
+      ) {
+        const [, size] = styledClassName.split('-');
+        const fontSize = this.config.theme.fontSize[size];
 
-          return `--border-opacity: ${opacityValue}`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.BORDER) ||
-          className.match(
-            this.dynamicPropertyClassesRegEx.BORDER_WITH_DIRECTION
-          )
-        ) {
-          const props = className.split('-');
+        return `font-size: ${fontSize};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.TEXT_WEIGHT)
+      ) {
+        const [, weight] = styledClassName.split('-');
+        const fontWeight = this.config.theme.fontWeight[weight];
 
-          // border-10
-          if (props.length === 2) {
-            const [, valueString] = props;
-            const value = `${parseInt(valueString)}px`;
+        return `font-weight: ${fontWeight};`;
+      } else if (
+        styledClassName.match(
+          this.dynamicPropertyClassesRegEx.PLACEHOLDER_OPACITY
+        )
+      ) {
+        const [, , opacity] = styledClassName.split('-');
+        const opacityValue = parseInt(opacity) / 100;
 
-            return `border-width: ${value};`;
+        return `--placeholder-opacity: ${opacityValue};`;
+      } // for text-black, placeholder-black
+      else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.TEXT_COLOR) ||
+        styledClassName.match(
+          this.dynamicPropertyClassesRegEx.PLACEHOLDER_COLOR
+        )
+      ) {
+        const props = styledClassName.split('-');
+
+        // text-black, text-trasparent
+        if (props.length === 2) {
+          const [, colorString] = props;
+          const colorHex = this.config.theme.colors[colorString];
+
+          return `color: ${colorHex};`;
+        }
+        // border-t-10 or border-b-100
+        else if (props.length === 3) {
+          const [, colorString, contrast] = props;
+          const colorHex = this.config.theme.colors[colorString][contrast];
+
+          return `color: ${colorHex};`;
+        }
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.LETTER_SPACING)
+      ) {
+        const [, spacing] = styledClassName.split('-');
+        const spacingValue = this.config.theme.letterSpacing[spacing];
+
+        return `letter-spacing: ${spacingValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.STROKE)
+      ) {
+        const [, value] = styledClassName.split('-');
+
+        return `stroke-width: ${value};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.LINE_HEIGHT)
+      ) {
+        const [, height] = styledClassName.split('-');
+        const lineHeight = this.config.theme.lineHeight[height];
+
+        return `line-height: ${lineHeight};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.OPACITY)
+      ) {
+        const [, opacity] = styledClassName.split('-');
+        const opacityValue = parseInt(opacity) / 100;
+
+        return `opacity: ${opacityValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.TEXT_OPACITY)
+      ) {
+        const [, , opacity] = styledClassName.split('-');
+        const opacityValue = parseInt(opacity) / 100;
+
+        return `opacity: ${opacityValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.BORDER_COLOR)
+      ) {
+        const props = styledClassName.split('-');
+
+        if (props.length === 2) {
+          const [, color] = props;
+          const colorHex = this.config.theme.colors[color];
+
+          return `color: ${colorHex};`;
+        } else if (props.length === 3) {
+          const [, color, contrast] = props;
+          const colorHex = this.config.theme.colors[color][contrast];
+
+          return `color: ${colorHex};`;
+        }
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MAX_WIDTH)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.maxWidth[breakpoint];
+
+        return `max-width: ${size};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.WIDTH)
+      ) {
+        const [, width] = styledClassName.split('-');
+        const widthValue = this.config.theme.width[width];
+
+        return `width: ${widthValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.HEIGHT)
+      ) {
+        const [, height] = styledClassName.split('-');
+        const heightValue = this.config.theme.width[height];
+
+        return `height: ${heightValue};`;
+      } else if (
+        styledClassName.match(
+          this.dynamicPropertyClassesRegEx.GRID_TEMPLATE_COLS
+        )
+      ) {
+        const [, , templateValue] = styledClassName.split('-');
+
+        if (templateValue.trim() === 'none') {
+          return 'grid-template-columns: none;';
+        } else {
+          return `grid-template-columns: repeat(${templateValue}, minmax(0, 1fr));`;
+        }
+      } else if (
+        styledClassName.match(
+          this.dynamicPropertyClassesRegEx.GRID_TEMPLATE_ROWS
+        )
+      ) {
+        const [, , templateValue] = styledClassName.split('-');
+
+        if (templateValue.trim() === 'none') {
+          return 'grid-template-rows: none;';
+        } else {
+          return `grid-template-rows: repeat(${templateValue}, minmax(0, 1fr));`;
+        }
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.GRID_ROW)
+      ) {
+        const props = styledClassName.split('-');
+
+        if (props.length === 2) {
+          const [, value] = props;
+
+          return value.trim() === 'auto' ? `grid-row: auto;` : styledClassName;
+        } else if (props.length === 3) {
+          const [, type, value] = props;
+
+          if (type === 'span') {
+            return `grid-row: span ${value} / span ${value};`;
+          } else if (type === 'end' || type === 'start') {
+            return `grid-row-${type}: ${value};`;
           }
-          // border-t-10 or border-b-100
-          else if (props.length === 3) {
-            const [, direction, valueString] = props;
-            const value = `${parseInt(valueString)}px`;
-            const directionStringorArray = this.expandDirectionChar(direction);
-            if (Array.isArray(directionStringorArray)) {
-              return directionStringorArray.reduce((prev, direction) => {
-                return `${prev}
-                    border${direction}-width: ${value};
-                `;
-              }, '');
-            }
+        }
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.GRID_COL)
+      ) {
+        const props = styledClassName.split('-');
 
-            return `border${directionStringorArray}-width: ${value};`;
+        if (props.length === 2) {
+          const [, value] = props;
+
+          return value.trim() === 'auto' ? `grid-col: auto;` : styledClassName;
+        } else if (props.length === 3) {
+          const [, type, value] = props;
+
+          if (type === 'span') {
+            return `grid-col: span ${value} / span ${value};`;
+          } else if (type === 'end' || type === 'start') {
+            return `grid-col-${type}: ${value};`;
           }
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.TEXT_SIZE)
-        ) {
-          const [, size] = className.split('-');
-          const fontSize = this.config.theme.fontSize[size];
+        }
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.GRID_GAP)
+      ) {
+        const [, gap] = styledClassName.split('-');
+        const gapValue = this.config.theme.gap[gap];
 
-          return `font-size: ${fontSize};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.TEXT_WEIGHT)
-        ) {
-          const [, weight] = className.split('-');
-          const fontWeight = this.config.theme.fontWeight[weight];
+        return `gap: ${gapValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.GRID_ROW_GAP)
+      ) {
+        const [, , gap] = styledClassName.split('-');
+        const gapValue = this.config.theme.gap[gap];
 
-          return `font-weight: ${fontWeight};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER_OPACITY)
-        ) {
-          const [, , opacity] = className.split('-');
-          const opacityValue = parseInt(opacity) / 100;
+        return `row-gap: ${gapValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.GRID_COL_GAP)
+      ) {
+        const [, , gap] = styledClassName.split('-');
+        const gapValue = this.config.theme.gap[gap];
 
-          return `--placeholder-opacity: ${opacityValue};`;
-        } // for text-black, placeholder-black
-        else if (
-          className.match(this.dynamicPropertyClassesRegEx.TEXT_COLOR) ||
-          className.match(this.dynamicPropertyClassesRegEx.PLACEHOLDER_COLOR)
-        ) {
-          const props = className.split('-');
-
-          // text-black, text-trasparent
-          if (props.length === 2) {
-            const [, colorString] = props;
-            const colorHex = this.config.theme.colors[colorString];
-
-            return `color: ${colorHex};`;
-          }
-          // border-t-10 or border-b-100
-          else if (props.length === 3) {
-            const [, colorString, contrast] = props;
-            const colorHex = this.config.theme.colors[colorString][contrast];
-
-            return `color: ${colorHex};`;
-          }
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.LETTER_SPACING)
-        ) {
-          const [, spacing] = className.split('-');
-          const spacingValue = this.config.theme.letterSpacing[spacing];
-
-          return `letter-spacing: ${spacingValue};`;
-        } else if (className.match(this.dynamicPropertyClassesRegEx.STROKE)) {
-          const [, value] = className.split('-');
-
-          return `stroke-width: ${value};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.LINE_HEIGHT)
-        ) {
-          const [, height] = className.split('-');
-          const lineHeight = this.config.theme.lineHeight[height];
-
-          return `line-height: ${lineHeight};`;
-        } else if (className.match(this.dynamicPropertyClassesRegEx.OPACITY)) {
-          const [, opacity] = className.split('-');
-          const opacityValue = parseInt(opacity) / 100;
-
-          return `opacity: ${opacityValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.TEXT_OPACITY)
-        ) {
-          const [, , opacity] = className.split('-');
-          const opacityValue = parseInt(opacity) / 100;
-
-          return `opacity: ${opacityValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.BORDER_COLOR)
-        ) {
-          const props = className.split('-');
-
-          if (props.length === 2) {
-            const [, color] = props;
-            const colorHex = this.config.theme.colors[color];
-
-            return `color: ${colorHex};`;
-          } else if (props.length === 3) {
-            const [, color, contrast] = props;
-            const colorHex = this.config.theme.colors[color][contrast];
-
-            return `color: ${colorHex};`;
-          }
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.MAX_WIDTH)
-        ) {
-          const [, , breakpoint] = className.split('-');
-          const size = this.config.theme.maxWidth[breakpoint];
-
-          return `max-width: ${size};`;
-        } else if (className.match(this.dynamicPropertyClassesRegEx.WIDTH)) {
-          const [, width] = className.split('-');
-          const widthValue = this.config.theme.width[width];
-
-          return `width: ${widthValue};`;
-        } else if (className.match(this.dynamicPropertyClassesRegEx.HEIGHT)) {
-          const [, height] = className.split('-');
-          const heightValue = this.config.theme.width[height];
-
-          return `height: ${heightValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.GRID_TEMPLATE_COLS)
-        ) {
-          const [, , templateValue] = className.split('-');
-
-          if (templateValue.trim() === 'none') {
-            return 'grid-template-columns: none;';
-          } else {
-            return `grid-template-columns: repeat(${templateValue}, minmax(0, 1fr));`;
-          }
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.GRID_TEMPLATE_ROWS)
-        ) {
-          const [, , templateValue] = className.split('-');
-
-          if (templateValue.trim() === 'none') {
-            return 'grid-template-rows: none;';
-          } else {
-            return `grid-template-rows: repeat(${templateValue}, minmax(0, 1fr));`;
-          }
-        } else if (className.match(this.dynamicPropertyClassesRegEx.GRID_ROW)) {
-          const props = className.split('-');
-
-          if (props.length === 2) {
-            const [, value] = props;
-
-            return value.trim() === 'auto' ? `grid-row: auto;` : className;
-          } else if (props.length === 3) {
-            const [, type, value] = props;
-
-            if (type === 'span') {
-              return `grid-row: span ${value} / span ${value};`;
-            } else if (type === 'end' || type === 'start') {
-              return `grid-row-${type}: ${value};`;
-            }
-          }
-        } else if (className.match(this.dynamicPropertyClassesRegEx.GRID_COL)) {
-          const props = className.split('-');
-
-          if (props.length === 2) {
-            const [, value] = props;
-
-            return value.trim() === 'auto' ? `grid-col: auto;` : className;
-          } else if (props.length === 3) {
-            const [, type, value] = props;
-
-            if (type === 'span') {
-              return `grid-col: span ${value} / span ${value};`;
-            } else if (type === 'end' || type === 'start') {
-              return `grid-col-${type}: ${value};`;
-            }
-          }
-        } else if (className.match(this.dynamicPropertyClassesRegEx.GRID_GAP)) {
-          const [, gap] = className.split('-');
-          const gapValue = this.config.theme.gap[gap];
-
-          return `gap: ${gapValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.GRID_ROW_GAP)
-        ) {
-          const [, , gap] = className.split('-');
-          const gapValue = this.config.theme.gap[gap];
-
-          return `row-gap: ${gapValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.GRID_COL_GAP)
-        ) {
-          const [, , gap] = className.split('-');
-          const gapValue = this.config.theme.gap[gap];
-
-          return `col-gap: ${gapValue};`;
-        } else if (
-          className.match(this.dynamicPropertyClassesRegEx.BORDER_RADIUS)
-        ) {
-          const props = className.split('-');
-          const defaultRadius = this.config.theme.borderRadius.default;
-          const directions = ['t', 'b', 'r', 'l', 'tr', 'tl', 'br', 'bl'];
-          const getBorderRadiusForDirection = (
-            direction: string,
-            radiusValue: string
-          ) => {
-            switch (direction) {
-              case 't': {
-                return `
+        return `col-gap: ${gapValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.BORDER_RADIUS)
+      ) {
+        const props = styledClassName.split('-');
+        const defaultRadius = this.config.theme.borderRadius.default;
+        const directions = ['t', 'b', 'r', 'l', 'tr', 'tl', 'br', 'bl'];
+        const getBorderRadiusForDirection = (
+          direction: string,
+          radiusValue: string
+        ) => {
+          switch (direction) {
+            case 't': {
+              return `
                   border-top-left-radius: ${radiusValue};
                   border-top-right-radius: ${radiusValue};
                   `;
-              }
-              case 'b': {
-                return `
+            }
+            case 'b': {
+              return `
                   border-bottom-right-radius: ${radiusValue};
                   border-bottom-left-radius: ${radiusValue};
                   `;
-              }
-              case 'l': {
-                return `
+            }
+            case 'l': {
+              return `
                   border-top-left-radius: ${radiusValue};
                   border-bottom-left-radius: ${radiusValue};
                   `;
-              }
-              case 'r': {
-                return `
+            }
+            case 'r': {
+              return `
                   border-top-right-radius: 0.25rem;
                   border-bottom-right-radius: 0.25rem;
                 `;
-              }
-              case 'tl': {
-                return `
+            }
+            case 'tl': {
+              return `
                   border-top-left-radius: ${radiusValue};
                 `;
-              }
-              case 'tr': {
-                return `
+            }
+            case 'tr': {
+              return `
                   border-top-right-radius: ${radiusValue};
                 `;
-              }
-              case 'br': {
-                return `
+            }
+            case 'br': {
+              return `
                   border-bottom-right-radius: ${radiusValue};
                 `;
-              }
-              default:
-                return '';
             }
-          };
-
-          if (props.length === 1) {
-            return `border-radius: ${defaultRadius};`;
-          } else if (props.length === 2) {
-            const [, sizeOrDirection] = props;
-
-            if (directions.includes(sizeOrDirection.trim())) {
-              return getBorderRadiusForDirection(
-                sizeOrDirection.trim(),
-                defaultRadius
-              );
-            } else {
-              const radiusValue = this.config.theme.borderRadius[
-                sizeOrDirection
-              ];
-
-              return `border-radius: ${radiusValue};`;
-            }
-          } else if (props.length === 3) {
-            const [, direction, size] = props;
-            const radiusValue = this.config.theme.borderRadius[size];
-
-            return getBorderRadiusForDirection(direction, radiusValue);
-          } else {
-            return className;
+            default:
+              return '';
           }
-        } else if (className.match(this.dynamicPropertyClassesRegEx.BG)) {
-          // color => red-500;
-          const [, colorName, contrast] = className.split('-');
-          let themeColor;
+        };
 
-          if (contrast) {
-            themeColor = this.config.theme.colors[colorName][contrast];
+        if (props.length === 1) {
+          return `border-radius: ${defaultRadius};`;
+        } else if (props.length === 2) {
+          const [, sizeOrDirection] = props;
+
+          if (directions.includes(sizeOrDirection.trim())) {
+            return getBorderRadiusForDirection(
+              sizeOrDirection.trim(),
+              defaultRadius
+            );
           } else {
-            themeColor = this.config.theme.colors[colorName];
-          }
+            const radiusValue = this.config.theme.borderRadius[sizeOrDirection];
 
-          return `background: ${themeColor};`;
+            return `border-radius: ${radiusValue};`;
+          }
+        } else if (props.length === 3) {
+          const [, direction, size] = props;
+          const radiusValue = this.config.theme.borderRadius[size];
+
+          return getBorderRadiusForDirection(direction, radiusValue);
+        } else {
+          return styledClassName;
+        }
+      } else if (styledClassName.match(this.dynamicPropertyClassesRegEx.BG)) {
+        // color => red-500;
+        const [, colorName, contrast] = styledClassName.split('-');
+        let themeColor;
+
+        if (contrast) {
+          themeColor = this.config.theme.colors[colorName][contrast];
+        } else {
+          themeColor = this.config.theme.colors[colorName];
         }
 
-        return className;
-      } else {
-        return className;
+        return `background: ${themeColor};`;
       }
-    });
 
-    return hydratedCSS;
+      return className;
+    } else {
+      return className;
+    }
   }
 
   private expandDirectionChar(direction: string) {
@@ -696,112 +713,114 @@ export class CSSGen {
     return '';
   }
 
-  private hydrateNormalClasses(classes: string[]): string {
-    const withCustomClasses = this.hydreateStaticClasses(classes);
-    const withPropertyValueClasses = this.hydratePropertyValueClasess(
-      withCustomClasses
-    );
-    const withDyanmicValueClasses = this.hydrateDynamicPropertyClasses(
-      withPropertyValueClasses
-    );
-
-    return withDyanmicValueClasses.join('');
+  private getClassName(className: string) {
+    return className.trim().substr(1);
   }
 
-  private hydratePseudoClasses(classes: string[]) {
-    const hoverClasses: string[] = [];
-    const activeClasses: string[] = [];
-    const smClasses: string[] = [];
-    const mdClasses: string[] = [];
-    const lgClasses: string[] = [];
+  private hydrateNormalClasses(className: string): string {
+    if (this.isStyleWindClass(className)) {
+      // it may be static class
+      let css = this.hydrateStaticClasses(className);
+
+      if (this.isStyleWindClass(css)) {
+        // if it is not static it may be property value type
+        css = this.hydratePropertyValueClasess(className);
+
+        // fuck it, it must be atleast dynamic property class
+        if (this.isStyleWindClass(css)) {
+          css = this.hydrateDynamicPropertyClasses(className);
+        }
+      }
+
+      if (this.isStyleWindClass(css)) {
+        // well we did our best but we don't support this class name
+        warn(`unknown class name ${css}`);
+      }
+
+      return css;
+    }
+
+    return className;
+  }
+
+  private hydratePseudoClasses(pseudoClass: string) {
     const sm = this.config.theme.screens.sm;
     const md = this.config.theme.screens.md;
     const lg = this.config.theme.screens.lg;
 
-    for (const pseudoClass of classes) {
-      const [prefix, className] = pseudoClass.split(':');
+    const [prefix, className] = this.getClassName(pseudoClass).split(':');
 
-      switch (prefix.trim()) {
-        case 'hover':
-          hoverClasses.push(className);
-          break;
-        case 'active':
-          activeClasses.push(className);
-          break;
-        case 'sm':
-          smClasses.push(className);
-          break;
-        case 'lg':
-          lgClasses.push(className);
-          break;
-        case 'md':
-          mdClasses.push(className);
-          break;
-        default:
-          warn(`unknown pseudo class ${prefix}`);
+    switch (prefix.trim()) {
+      case 'hover': {
+        const hydratedHoverClasses = this.hydrateNormalClasses(`.${className}`);
+
+        return `&:hover {
+        ${hydratedHoverClasses}
+        }`;
+      }
+      case 'active': {
+        const hydratedActiveClasses = this.hydrateNormalClasses(
+          `.${className}`
+        );
+
+        return `&:active {
+        ${hydratedActiveClasses}
+        }`;
+      }
+      case 'sm': {
+        const hydratedSmClasses = this.hydrateNormalClasses(`.${className}`);
+
+        return `@media (min-width: ${sm}) {
+        ${hydratedSmClasses}
+        }`;
+      }
+      case 'lg': {
+        const hydratedMdClasses = this.hydrateNormalClasses(`.${className}`);
+
+        return `@media (min-width: ${md}) {
+        ${hydratedMdClasses}
+        }`;
+      }
+      case 'md': {
+        const hydrateLgClasses = this.hydrateNormalClasses(`.${className}`);
+
+        return `@media (min-width: ${lg}) {
+        ${hydrateLgClasses}
+        }`;
+      }
+      default: {
+        warn(`unknown pseudo class ${prefix}`);
+
+        return className;
       }
     }
-
-    const hydratedHoverClasses = this.hydrateNormalClasses(hoverClasses);
-    const hydratedActiveClasses = this.hydrateNormalClasses(activeClasses);
-    const hydratedSmClasses = this.hydrateNormalClasses(smClasses);
-    const hydratedMdClasses = this.hydrateNormalClasses(mdClasses);
-    const hydrateLgClasses = this.hydrateNormalClasses(lgClasses);
-
-    const hoverCSS =
-      hoverClasses.length > 0
-        ? `&:hover {
-      ${hydratedHoverClasses}
-      }`
-        : '';
-    const activeCSS =
-      activeClasses.length > 0
-        ? `&:active {
-      ${hydratedActiveClasses}
-      }`
-        : '';
-    const smCSS =
-      smClasses.length > 0
-        ? `@media (min-width: ${sm}) {
-      ${hydratedSmClasses}
-      }`
-        : '';
-    const mdCSS =
-      mdClasses.length > 0
-        ? `@media (min-width: ${md}) {
-      ${hydratedMdClasses}
-      }`
-        : '';
-    const lgCSS =
-      lgClasses.length > 0
-        ? `@media (min-width: ${lg}) {
-      ${hydrateLgClasses}
-      }`
-        : '';
-
-    return `
-        ${hoverCSS}
-        ${activeCSS}
-        ${smCSS}
-        ${mdCSS}
-        ${lgCSS}
-      `;
   }
 
-  genCSS(classes: string[]): string {
-    const normalClasses = classes.filter(
-      (className) => className.split(':').length === 1
-    );
-    const pseudoClasses = classes.filter(
-      (className) => className.split(':').length > 1
-    );
+  private isPseudoClass(className: string) {
+    return className.split(':').length > 1;
+  }
 
-    const normalCSS = this.hydrateNormalClasses(normalClasses);
-    const pseudoCSS = this.hydratePseudoClasses(pseudoClasses);
+  genCSS(classes: string[] | string): string {
+    if (!Array.isArray(classes)) {
+      return this.isPseudoClass(classes)
+        ? this.hydratePseudoClasses(classes)
+        : this.hydrateNormalClasses(classes);
+    } else {
+      const normalClasses = classes.filter(
+        (className) => !this.isPseudoClass(className)
+      );
+      const pseudoClasses = classes.filter(this.isPseudoClass);
+      const normalCSS = normalClasses
+        .map(this.hydrateNormalClasses, this)
+        .join('');
+      const pseudoCSS = pseudoClasses
+        .map(this.hydratePseudoClasses, this)
+        .join('');
 
-    return `
+      return `
       ${normalCSS}
       ${pseudoCSS}
     `;
+    }
   }
 }
