@@ -739,32 +739,32 @@ export class CSSGen {
   }
 
   private hydrateNormalClasses(className: string): string {
-    if (CSSGen.isStyleWindClass(className)) {
-      // it may be static class
-      let css = this.hydrateStaticClasses(className);
+    if (!CSSGen.isStyleWindClass(className)) return className;
 
+    // it may be static class
+    let css = this.hydrateStaticClasses(className);
+
+    if (CSSGen.isStyleWindClass(css)) {
+      // if it is not static it may be property value type
+      css = this.hydratePropertyValueClasses(className);
+
+      // fuck it, it must be atleast dynamic property class
       if (CSSGen.isStyleWindClass(css)) {
-        // if it is not static it may be property value type
-        css = this.hydratePropertyValueClasses(className);
-
-        // fuck it, it must be atleast dynamic property class
-        if (CSSGen.isStyleWindClass(css)) {
-          css = this.hydrateDynamicPropertyClasses(className);
-        }
+        css = this.hydrateDynamicPropertyClasses(className);
       }
-
-      if (CSSGen.isStyleWindClass(css)) {
-        // well we did our best but we don't support this class name
-        warn(`unknown class name ${css}`);
-      }
-
-      return css;
     }
 
-    return className;
+    if (CSSGen.isStyleWindClass(css)) {
+      // well we did our best but we don't support this class name
+      warn(`unknown class name ${css}`);
+    }
+
+    return css;
   }
 
   private hydratePseudoClasses(pseudoClass: string) {
+    if (!CSSGen.isStyleWindClass(pseudoClass)) return pseudoClass;
+
     const sm = this.config.theme.screens.sm;
     const md = this.config.theme.screens.md;
     const lg = this.config.theme.screens.lg;
