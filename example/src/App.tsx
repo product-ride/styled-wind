@@ -8,8 +8,8 @@ interface ContainerProps {
 const Container = styled.div<ContainerProps>`
                   .bg-red-600;
                   .p-10;
-                  .hover: bg-green-900;
-                  .rounded-lg;
+                  swind-hover: bg-green-900;
+                  swind: rounded-lg;
                   .md:bg-purple-900;
                   .bg-cyan;
                   .mt-96;
