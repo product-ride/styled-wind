@@ -27,7 +27,7 @@ const Input = styled.input.attrs(() => ({
 const App = () => {
   return (
     <>
-      <Banner margin='200px'>hello</Banner>
+      <Banner margin='400px'>hello</Banner>
       <Input />
     </>
   );
