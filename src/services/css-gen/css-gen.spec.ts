@@ -243,4 +243,18 @@ describe('CSSGen', () => {
       `"@media (min-width: 640px) {        background: #742a2a;        }"`
     );
   });
+
+  it('should support swind API', () => {
+    const css = cssGen.genCSS('swind : text-red-900');
+
+    expect(css).toMatchInlineSnapshot(`"color: #742a2a;"`);
+  });
+
+  it('should support swind-hover API', () => {
+    const css = cssGen.genCSS('swind-hover : text-red-900');
+
+    expect(css).toMatchInlineSnapshot(
+      `"&:hover {        color: #742a2a;        }"`
+    );
+  });
 });

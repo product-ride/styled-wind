@@ -1,6 +1,8 @@
 import last from 'lodash-es/last';
 import { warn } from '../../utils/utils';
 
+const SWIND_API_REGEX = /^swind/;
+
 export class CSSGen {
   // stores the theme config object
   private config: any;
@@ -239,8 +241,11 @@ export class CSSGen {
     clear: /^clear-(.*)/
   };
 
-  private isStyleWindClass(classNameOrStyle: string) {
-    return classNameOrStyle.trim().startsWith('.');
+  private static isStyleWindClass(classNameOrStyle: string) {
+    return (
+      this.usesDotNotationAPI(classNameOrStyle) ||
+      this.usesSwindAPI(classNameOrStyle)
+    );
   }
 
   private staticPropertyClasses = Object.values(
@@ -289,13 +294,13 @@ export class CSSGen {
 
   // classes like clearfix, word-wrap etc.
   private hydrateStaticClasses(className: string) {
-    return this.staticClasses[this.getClassName(className)] || className;
+    return this.staticClasses[CSSGen.getClassName(className)] || className;
   }
 
   // float-left => flat: left;
   // overflow-x-hidden => overflow-x: hidden;
-  private hydratePropertyValueClasess(className: string) {
-    const styledClassName = this.getClassName(className);
+  private hydratePropertyValueClasses(className: string) {
+    const styledClassName = CSSGen.getClassName(className);
     const propertyValueClass = this.staticPropertyClasses.find(
       (propertyValueClass) => propertyValueClass.test(styledClassName)
     );
@@ -318,7 +323,7 @@ export class CSSGen {
 
   // mt-10, m-10, p-10, pb-10
   private hydrateDynamicPropertyClasses(className: string) {
-    const styledClassName = this.getClassName(className);
+    const styledClassName = CSSGen.getClassName(className);
 
     const dyanmicPopertyClass = this.dynamicPropertyClasses.find(
       (dynamicPropertyClass) => dynamicPropertyClass.test(styledClassName)
@@ -332,7 +337,7 @@ export class CSSGen {
         ) as any;
 
         const themeValue = this.config.theme.margin[value];
-        const directionStringorArray = this.expandDirectionChar(direction);
+        const directionStringorArray = CSSGen.expandDirectionChar(direction);
         if (Array.isArray(directionStringorArray)) {
           return directionStringorArray.reduce((prev, direction) => {
             return `${prev}
@@ -350,7 +355,7 @@ export class CSSGen {
         ) as any;
 
         const themeValue = this.config.theme.spacing[value];
-        const directionStringorArray = this.expandDirectionChar(direction);
+        const directionStringorArray = CSSGen.expandDirectionChar(direction);
         if (Array.isArray(directionStringorArray)) {
           return directionStringorArray.reduce((prev, direction) => {
             return `${prev}
@@ -386,7 +391,7 @@ export class CSSGen {
         else if (props.length === 3) {
           const [, direction, valueString] = props;
           const value = `${parseInt(valueString)}px`;
-          const directionStringorArray = this.expandDirectionChar(direction);
+          const directionStringorArray = CSSGen.expandDirectionChar(direction);
           if (Array.isArray(directionStringorArray)) {
             return directionStringorArray.reduce((prev, direction) => {
               return `${prev}
@@ -703,7 +708,7 @@ export class CSSGen {
     }
   }
 
-  private expandDirectionChar(direction: string) {
+  private static expandDirectionChar(direction: string) {
     // TODO: change this switch to if else with pattern matching
     switch (direction) {
       case 'y':
@@ -723,26 +728,32 @@ export class CSSGen {
     return '';
   }
 
-  private getClassName(className: string) {
-    return className.trim().substr(1);
+  private static getClassName(className: string) {
+    if (this.usesSwindAPI(className)) {
+      const [, classNamePart] = className.split(':');
+
+      return classNamePart.trim();
+    } else {
+      return className.trim().substr(1);
+    }
   }
 
   private hydrateNormalClasses(className: string): string {
-    if (this.isStyleWindClass(className)) {
+    if (CSSGen.isStyleWindClass(className)) {
       // it may be static class
       let css = this.hydrateStaticClasses(className);
 
-      if (this.isStyleWindClass(css)) {
+      if (CSSGen.isStyleWindClass(css)) {
         // if it is not static it may be property value type
-        css = this.hydratePropertyValueClasess(className);
+        css = this.hydratePropertyValueClasses(className);
 
         // fuck it, it must be atleast dynamic property class
-        if (this.isStyleWindClass(css)) {
+        if (CSSGen.isStyleWindClass(css)) {
           css = this.hydrateDynamicPropertyClasses(className);
         }
       }
 
-      if (this.isStyleWindClass(css)) {
+      if (CSSGen.isStyleWindClass(css)) {
         // well we did our best but we don't support this class name
         warn(`unknown class name ${css}`);
       }
@@ -758,7 +769,7 @@ export class CSSGen {
     const md = this.config.theme.screens.md;
     const lg = this.config.theme.screens.lg;
 
-    const [prefix, className] = this.getClassName(pseudoClass).split(':');
+    const [prefix, className] = CSSGen.getPseudoAndClassName(pseudoClass);
 
     switch (prefix.trim()) {
       case 'hover': {
@@ -814,20 +825,48 @@ export class CSSGen {
     }
   }
 
-  private isPseudoClass(className: string) {
-    return className.split(':').length > 1;
+  private static isPseudoClass(className: string) {
+    if (CSSGen.usesSwindAPI(className)) {
+      const [keyword] = className.trim().split(':');
+
+      return keyword.split('-').length > 1;
+    } else {
+      return className.split(':').length > 1;
+    }
+  }
+
+  private static getPseudoAndClassName(pseudoClassName: string) {
+    if (CSSGen.usesSwindAPI(pseudoClassName)) {
+      const [keyword, className] = pseudoClassName.split(':');
+      const [, pseudo] = keyword.split('-');
+
+      return [pseudo, className];
+    } else {
+      return CSSGen.getClassName(pseudoClassName).split(':');
+    }
+  }
+
+  // check if it is like swind: bg-red-200;
+  private static usesSwindAPI(className: string) {
+    const [keyword] = className.trim().split(':');
+
+    return keyword.trim().match(SWIND_API_REGEX);
+  }
+
+  private static usesDotNotationAPI(className: string) {
+    return className.trim().startsWith('.');
   }
 
   genCSS(classes: string[] | string): string {
     if (!Array.isArray(classes)) {
-      return this.isPseudoClass(classes)
+      return CSSGen.isPseudoClass(classes)
         ? this.hydratePseudoClasses(classes)
         : this.hydrateNormalClasses(classes);
     } else {
       const normalClasses = classes.filter(
-        (className) => !this.isPseudoClass(className)
+        (className) => !CSSGen.isPseudoClass(className)
       );
-      const pseudoClasses = classes.filter(this.isPseudoClass);
+      const pseudoClasses = classes.filter(CSSGen.isPseudoClass);
       const normalCSS = normalClasses
         .map(this.hydrateNormalClasses, this)
         .join('');
