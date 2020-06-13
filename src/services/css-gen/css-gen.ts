@@ -732,9 +732,9 @@ export class CSSGen {
     if (this.usesSwindAPI(className)) {
       const [, classNamePart] = className.split(':');
 
-      return classNamePart.trim();
+      return classNamePart.trim().split(';')[0];
     } else {
-      return className.trim().substr(1);
+      return className.substr(1);
     }
   }
 
@@ -837,10 +837,10 @@ export class CSSGen {
 
   private static getPseudoAndClassName(pseudoClassName: string) {
     if (CSSGen.usesSwindAPI(pseudoClassName)) {
-      const [keyword, className] = pseudoClassName.split(':');
-      const [, pseudo] = keyword.split('-');
+      const [keyword] = pseudoClassName.split(':');
+      const [, pseudo] = keyword.trim().split('-');
 
-      return [pseudo, className];
+      return [pseudo, CSSGen.getClassName(pseudoClassName)];
     } else {
       return CSSGen.getClassName(pseudoClassName).split(':');
     }
