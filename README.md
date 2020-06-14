@@ -13,7 +13,7 @@ Styled-wind is a CSS-in-JS library, written on top of styled-components. It inhe
 
 ## Motivation
 
-Styled-components is one of the most famous CSS-in-JSS library and has been favorite styling tool in the React ecosystem. On the other hand, tailwind css has gained a lot of momentum recently because of the ease of use and quick development of responsive web apps. However, there are few practical issues in using tailwind css. This library is an attempt to get the best of both worlds.
+Styled-components is one of the most famous CSS-in-JS library and has been favorite styling tool in the React ecosystem. On the other hand, tailwind css has gained a lot of momentum recently because of the ease of use and quick development of responsive web apps. However, there are few practical issues in using tailwind css. This library is an attempt to get the best of both worlds.
 
 See the [Quick start](https://styled-wind.netlify.app/#/quickstart) guide for more details.
 
