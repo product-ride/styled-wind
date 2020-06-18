@@ -34,6 +34,13 @@
       "/!node_modules\\/lodash-es/"
     ]
   },
+  "keywords": [
+    "styled-components",
+    "tailwindcss",
+    "styled-wind",
+    "css-in-js",
+    "sass"
+  ],
   "types": "dist/index.d.ts",
   "peerDependencies": {
     "react": "^16.0.0",
