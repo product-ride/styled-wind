@@ -258,14 +258,14 @@ export class CSSGen {
     SCALE: /^scale-(.*)/,
     BORDER: /^border-[0-9]/,
     BORDER_OPACITY: /^border-opacity-[0-9]/,
-    BORDER_COLOR: /^border-(.*)-[0-9]/,
+    BORDER_COLOR: /^border-(?!opacity)(.*)-[0-9]/,
     BORDER_WITH_DIRECTION: /^border-(.)-[0-9]/,
-    TEXT_COLOR: /^text-(.*)/,
     TEXT_SIZE: /^text-(xs|sm|base|lg|[0-9]xl)$/,
     TEXT_WEIGHT: /^font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)$/,
     TEXT_OPACITY: /^text-opacity-[0-9]/,
-    PLACEHOLDER_COLOR: /^placeholder-(.*)/,
+    TEXT_COLOR: /^text-(?!opacity)(.*)/,
     PLACEHOLDER_OPACITY: /^placeholder-opacity-[0-9]/,
+    PLACEHOLDER_COLOR: /^placeholder-(?!opacity)(.*)/,
     STROKE: /^stroke-[0-9]/,
     LETTER_SPACING: /^tracking-(tighter|tight|normal|wide|wider|widest)/,
     LINE_HEIGHT: /^leading-(.*)/,
@@ -281,7 +281,8 @@ export class CSSGen {
     GRID_ROW_GAP: /^row-gap-[0-9]/,
     GRID_COL_GAP: /^col-gap-[0-9]/,
     BORDER_RADIUS: /^(rounded$|(rounded-(.*)$)|(rounded-(.*)-(.*)))/,
-    BG: /bg-(.*)/
+    BG_OPACITY: /^bg-opacity-[0-9]/,
+    BG: /bg-(?!opacity)(.*)/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -700,6 +701,15 @@ export class CSSGen {
         }
 
         return `background: ${themeColor};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.BG_OPACITY)
+      ) {
+        const [, , opacity] = styledClassName.split('-');
+        const opacityValue = parseInt(opacity) / 100;
+
+        return `
+        opacity: ${opacityValue};
+        `;
       }
 
       return className;
