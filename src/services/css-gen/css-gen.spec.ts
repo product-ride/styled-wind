@@ -94,6 +94,18 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`"opacity: 0.25;"`);
   });
 
+  it('should generate css for text opacity', () => {
+    const css = cssGen.genCSS(['.text-opacity-25']);
+
+    expect(css).toMatchInlineSnapshot(`"opacity: 0.25;"`);
+  });
+
+  it('should generate css for background opacity', () => {
+    const css = cssGen.genCSS(['.bg-opacity-25']);
+
+    expect(css).toMatchInlineSnapshot(`"opacity: 0.25;"`);
+  });
+
   it('should generate css for placeholder opacity', () => {
     const css = cssGen.genCSS(['.placeholder-opacity-25']);
 
