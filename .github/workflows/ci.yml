@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        node_version: [10]
+        node_version: [12]
 
     steps:
       - uses: actions/checkout@v1
@@ -18,10 +18,10 @@ jobs:
           version: ${{ matrix.node_version }}
 
       - name: Install Dependencies
-        run: yarn install
+        run: npm install
 
       - name: Lint
-        run: yarn test:lint
+        run: npm run test:lint
 
       - name: Run tests
-        run: yarn test
+        run: npm run test

@@ -6,25 +6,21 @@
   "license": "MIT",
   "repository": "https://github.com/product-ride/styled-tailwind",
   "main": "dist/index.js",
-  "module": "dist/index.modern.js",
   "source": "src/index.tsx",
   "engines": {
     "node": ">=10"
   },
   "scripts": {
     "build": "node ./scripts/build.js",
-    "build-lib": "microbundle-crl --no-compress --format modern,cjs",
-    "gen-type-declaration": "tsc src/index.tsx --emitDeclarationOnly --declaration",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
-    "test": "run-s test:unit test:lint test:build",
+    "build-lib": "rollup -c",
+    "start": "rollup -c -w",
+    "prepare": "npm run build",
+    "test": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:build": "run-s build",
     "test:lint": "eslint --fix src/** example/src/** --ext .ts,.tsx",
     "test:lint-staged": "eslint --fix",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
     "prettify": "prettier --write",
-    "predeploy": "cd example && npm install && npm run build"
+    "predeploy": "npm run build"
   },
   "jest": {
     "snapshotSerializers": [
@@ -47,9 +43,14 @@
     "styled-components": "^5.1.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-typescript": "^6.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/babel-plugin-macros": "^2.8.3",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.155",
     "@types/lodash-es": "^4.17.3",
@@ -73,13 +74,13 @@
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.9",
-    "microbundle-crl": "^0.13.10",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "pretty-format": "^26.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
+    "rollup": "^2.29.0",
     "shelljs": "^0.8.4",
     "typescript": "^3.7.5"
   },
@@ -103,6 +104,7 @@
     "package.json"
   ],
   "dependencies": {
+    "babel-plugin-macros": "^2.8.0",
     "lodash-es": "^4.17.15",
     "reduce-css-calc": "^2.1.7"
   }
