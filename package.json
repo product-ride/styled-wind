@@ -6,7 +6,6 @@
   "license": "MIT",
   "repository": "https://github.com/product-ride/styled-tailwind",
   "main": "dist/index.js",
-  "source": "src/index.tsx",
   "engines": {
     "node": ">=10"
   },
