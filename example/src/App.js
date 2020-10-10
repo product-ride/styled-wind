@@ -1,11 +1,8 @@
 import React from 'react';
 import styled from 'styled-wind';
+import styledMacro from 'styled-wind/dist/macro';
 
-interface ContainerProps {
-  margin: string;
-}
-
-const Container = styled.div<ContainerProps>`
+const Container = styled.div`
                   .bg-red-600;
                   .p-10;
                   swind-hover: bg-green-900;
@@ -17,7 +14,7 @@ const Container = styled.div<ContainerProps>`
 
 const Banner = styled(Container)`
   .text-red-600;
-  margin-top: ${(props: any) => props.margin};
+  margin-top: ${(props) => props.margin};
 `;
 const Input = styled.input.attrs(() => ({
   type: 'email',
@@ -25,6 +22,8 @@ const Input = styled.input.attrs(() => ({
 }))`.placeholder-red-900;`;
 
 const App = () => {
+  console.log(styledMacro`2 + 2`);
+
   return (
     <>
       <Banner margin='400px'>hello</Banner>

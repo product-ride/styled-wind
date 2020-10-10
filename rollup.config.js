@@ -1,14 +1,14 @@
-const path = require('path');
-const typescript = require('@rollup/plugin-typescript');
-const json = require('@rollup/plugin-json');
-const commonjs = require('@rollup/plugin-commonjs');
-const { nodeResolve } = require('@rollup/plugin-node-resolve');
+import path from 'path';
+import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 
 const plugins = [
-  typescript({ sourceMap: process.env.NODE_ENV === 'development' }),
+  resolve(),
+  commonjs({ exclude: ['node_modules/lodash-es/**'] }),
   json(),
-  commonjs(),
-  nodeResolve()
+  typescript({ sourceMap: process.env.NODE_ENV === 'development' }),
 ];
 
 const external = [
@@ -18,14 +18,14 @@ const external = [
   'react-dom'
 ];
 
-module.exports = [
+export default [
   {
-    input: 'src/macro/macro.ts',
+    input: 'src/macro/index.js',
     output: {
-      dir: path.join(__dirname, 'dist', 'macro'),
+      file: path.join(__dirname, 'dist', 'macro.js'),
       format: 'cjs',
       compact: process.env.NODE_ENV !== 'development',
-      exports: 'auto'
+      exports: 'default'
     },
     plugins,
     external
@@ -36,7 +36,7 @@ module.exports = [
       dir: path.join(__dirname, 'dist'),
       format: 'cjs',
       compact: process.env.NODE_ENV !== 'development',
-      exports: 'auto'
+      exports: 'default'
     },
     plugins,
     external
