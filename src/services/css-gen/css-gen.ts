@@ -282,7 +282,9 @@ export class CSSGen {
     GRID_COL_GAP: /^col-gap-[0-9]/,
     BORDER_RADIUS: /^(rounded$|(rounded-(.*)$)|(rounded-(.*)-(.*)))/,
     BG_OPACITY: /^bg-opacity-[0-9]/,
-    BG: /bg-(?!opacity)(.*)/
+    BG: /bg-(?!opacity)(.*)/,
+    ZINDEX: /z-(.*)/,
+    CURSOR: /cursor-(.*)/
   };
 
   private dynamicPropertyClasses = Object.values(
@@ -709,6 +711,24 @@ export class CSSGen {
 
         return `
         opacity: ${opacityValue};
+        `;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.ZINDEX)
+      ) {
+        const [, zindex] = styledClassName.split('-');
+        const zindexValue = zindex !== 'auto' ? parseInt(zindex) : zindex;
+
+        return `
+        z-index: ${zindexValue};
+        `;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.CURSOR)
+      ) {
+        const [, cursor] = styledClassName.split('-');
+        const cursorValue = cursor;
+
+        return `
+        cursor: ${cursorValue};
         `;
       }
 

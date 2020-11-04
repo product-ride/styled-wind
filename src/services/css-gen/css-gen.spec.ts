@@ -198,6 +198,18 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`"col-gap: 2.5rem;"`);
   });
 
+  it('should generate css for z-10', () => {
+    const css = cssGen.genCSS(['.z-10']);
+
+    expect(css).toMatchInlineSnapshot(`"z-index: 10;"`);
+  });
+
+  it('should generate css for cursor-pointer', () => {
+    const css = cssGen.genCSS(['.cursor-pointer']);
+
+    expect(css).toMatchInlineSnapshot(`"cursor: pointer;"`);
+  });
+
   it('should generate css for border-radius without direction', () => {
     const css = cssGen.genCSS([
       '.rounded',
