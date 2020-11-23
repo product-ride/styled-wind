@@ -157,6 +157,7 @@ export class CSSGen {
     'justify-between': 'justify-content: space-between;',
     'justify-around': 'justify-content: space-around;',
     'justify-evenly': 'justify-content: space-evenly;',
+    border: 'border-width: 1px;',
     'border-solid': 'border-style: solid;',
     'border-dashed': 'border-style: dashed;',
     'border-dotted': 'border-style: dotted;',
