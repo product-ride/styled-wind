@@ -794,7 +794,7 @@ export class CSSGen {
   }
 
   private hydratePseudoClasses(pseudoClass: string) {
-    if (!CSSGen.isStyleWindClass(pseudoClass)) return pseudoClass + ';';
+    if (!CSSGen.isStyleWindClass(pseudoClass)) return `${pseudoClass};`;
 
     const sm = this.config.theme.screens.sm;
     const md = this.config.theme.screens.md;
