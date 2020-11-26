@@ -645,8 +645,8 @@ export class CSSGen {
             }
             case 'r': {
               return `
-                  border-top-right-radius: 0.25rem;
-                  border-bottom-right-radius: 0.25rem;
+                  border-top-right-radius: ${radiusValue};
+                  border-bottom-right-radius: ${radiusValue};
                 `;
             }
             case 'tl': {
@@ -657,6 +657,11 @@ export class CSSGen {
             case 'tr': {
               return `
                   border-top-right-radius: ${radiusValue};
+                `;
+            }
+            case 'bl': {
+              return `
+                  border-bottom-left-radius: ${radiusValue};
                 `;
             }
             case 'br': {
