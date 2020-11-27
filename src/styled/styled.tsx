@@ -9,32 +9,30 @@ const customConfig = windowObj?.__STYLED_WIND_CUSTOM_CONFIG__ || {};
 const config = generateStylesJS(customConfig);
 const cssGen = new CSSGen(config);
 
-const getHydratedTemplateString = (strings: TemplateStringsArray) => {
+const getHydratedTemplateString = (strings: TemplateStringsArray): any => {
   const sanitizedStyles = strings.map((stringsPart) => {
-    const classes = stringsPart.split(';');
-    /*
-      This is to handle the following case
-
-      margin-top: ${(props: any) => props.margin};
-     .text-yellow-900;
-
-     if we don't do this then we might miss the ; from `margin-top` style
-     and style wind style will be applied in the same line leading to
-
-     margin-top: 20pxcolor:#fff;
-    */
-    if (classes[0].length === 0) {
-      return [';', ...classes];
-    } else {
-      return classes;
-    }
+    /**
+     * styled.div`
+     *  .text-red-600;
+     *  margin-top: 50px;
+     * `
+     *
+     * We will go through all the classes and replace tailwind css with the
+     * exact css value.
+     *
+     */
+    return stringsPart
+      .split(';')
+      .map((style) => {
+        if (style.trim().startsWith('.')) {
+          return cssGen.genCSS(style.trim()).trim().replace(';;', ';');
+        }
+        return style;
+      })
+      .join(';');
   });
 
-  return sanitizedStyles.map((sanitizedStyle) => {
-    return sanitizedStyle.map((style) => {
-      return cssGen.genCSS(style.trim()).trim();
-    });
-  }) as any;
+  return sanitizedStyles;
 };
 
 const styledWrapper:
