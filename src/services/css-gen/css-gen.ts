@@ -530,7 +530,7 @@ export class CSSGen {
         styledClassName.match(this.dynamicPropertyClassesRegEx.HEIGHT)
       ) {
         const [, height] = styledClassName.split('-');
-        const heightValue = this.config.theme.width[height];
+        const heightValue = this.config.theme.height[height];
 
         return `height: ${heightValue};`;
       } else if (
