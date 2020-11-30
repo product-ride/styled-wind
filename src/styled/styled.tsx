@@ -1,41 +1,6 @@
 import { DOMElement, domElements } from '../utils/dom-elements';
 import styled, { AnyStyledComponent } from 'styled-components';
-import { CSSGen } from '../services/css-gen/css-gen';
-import generateStylesJS from '../utils/generateStylesJS';
-
-const windowObj: any = window;
-const customConfig = windowObj?.__STYLED_WIND_CUSTOM_CONFIG__ || {};
-
-const config = generateStylesJS(customConfig);
-const cssGen = new CSSGen(config);
-
-const getHydratedTemplateString = (strings: TemplateStringsArray) => {
-  const sanitizedStyles = strings.map((stringsPart) => {
-    const classes = stringsPart.split(';');
-    /*
-      This is to handle the following case
-
-      margin-top: ${(props: any) => props.margin};
-     .text-yellow-900;
-
-     if we don't do this then we might miss the ; from `margin-top` style
-     and style wind style will be applied in the same line leading to
-
-     margin-top: 20pxcolor:#fff;
-    */
-    if (classes[0].length === 0) {
-      return [';', ...classes];
-    } else {
-      return classes;
-    }
-  });
-
-  return sanitizedStyles.map((sanitizedStyle) => {
-    return sanitizedStyle.map((style) => {
-      return cssGen.genCSS(style.trim()).trim();
-    });
-  }) as any;
-};
+import { getHydratedTemplateString } from '../utils/getHydratedTemplateString';
 
 const styledWrapper:
   | Record<DOMElement, string>
