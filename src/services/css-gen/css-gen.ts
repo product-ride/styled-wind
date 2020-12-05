@@ -272,7 +272,10 @@ export class CSSGen {
     LINE_HEIGHT: /^leading-(.*)/,
     OPACITY: /^opacity-[0-9]/,
     MAX_WIDTH: /^max-w-(.*)/,
+    MIN_WIDTH: /^min-w-(.*)/,
     WIDTH: /^w-(.*)/,
+    MAX_HEIGHT: /^max-h-(.*)/,
+    MIN_HEIGHT: /^min-h-(.*)/,
     HEIGHT: /^h-(.*)/,
     GRID_TEMPLATE_COLS: /^grid-cols-(.*)/,
     GRID_TEMPLATE_ROWS: /^grid-rows-(.*)/,
@@ -520,12 +523,33 @@ export class CSSGen {
 
         return `max-width: ${size};`;
       } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MIN_WIDTH)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.minWidth[breakpoint];
+
+        return `min-width: ${size};`;
+      } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.WIDTH)
       ) {
         const [, width] = styledClassName.split('-');
         const widthValue = this.config.theme.width[width];
 
         return `width: ${widthValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MAX_HEIGHT)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.maxHeight[breakpoint];
+
+        return `max-height: ${size};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MIN_HEIGHT)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.minHeight[breakpoint];
+
+        return `min-height: ${size};`;
       } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.HEIGHT)
       ) {
