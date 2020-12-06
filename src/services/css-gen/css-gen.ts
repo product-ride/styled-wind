@@ -215,13 +215,6 @@ export class CSSGen {
     resize: 'resize: both;',
     'fill-current': 'fill: currentColor;',
     'stroke-current': 'stroke: currentColor;',
-    'max-h-full': 'max-height: 100%;',
-    'max-h-screen': 'max-height: 100vh;',
-    'min-h-0': 'min-height: 0;',
-    'min-h-full': 'min-height: 100%;',
-    'min-h-screen': 'min-height: 100vh;',
-    'min-w-0': 'min-width: 0;',
-    'min-w-full': 'min-width: 100%;',
     'grid-flow-row': 'grid-auto-flow: row;',
     'grid-flow-col': 'grid-auto-flow: column;',
     'grid-flow-row-dense': 'grid-auto-flow: row dense;',
@@ -272,7 +265,10 @@ export class CSSGen {
     LINE_HEIGHT: /^leading-(.*)/,
     OPACITY: /^opacity-[0-9]/,
     MAX_WIDTH: /^max-w-(.*)/,
+    MIN_WIDTH: /^min-w-(.*)/,
     WIDTH: /^w-(.*)/,
+    MAX_HEIGHT: /^max-h-(.*)/,
+    MIN_HEIGHT: /^min-h-(.*)/,
     HEIGHT: /^h-(.*)/,
     GRID_TEMPLATE_COLS: /^grid-cols-(.*)/,
     GRID_TEMPLATE_ROWS: /^grid-rows-(.*)/,
@@ -520,6 +516,13 @@ export class CSSGen {
 
         return `max-width: ${size};`;
       } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MIN_WIDTH)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.minWidth[breakpoint];
+
+        return `min-width: ${size};`;
+      } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.WIDTH)
       ) {
         const [, width] = styledClassName.split('-');
@@ -527,10 +530,24 @@ export class CSSGen {
 
         return `width: ${widthValue};`;
       } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MAX_HEIGHT)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.maxHeight[breakpoint];
+
+        return `max-height: ${size};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MIN_HEIGHT)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.minHeight[breakpoint];
+
+        return `min-height: ${size};`;
+      } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.HEIGHT)
       ) {
         const [, height] = styledClassName.split('-');
-        const heightValue = this.config.theme.width[height];
+        const heightValue = this.config.theme.height[height];
 
         return `height: ${heightValue};`;
       } else if (
