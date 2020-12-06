@@ -279,7 +279,6 @@ export class CSSGen {
     GRID_COL_GAP: /^col-gap-[0-9]/,
     BORDER_RADIUS: /^(rounded$|(rounded-(.*)$)|(rounded-(.*)-(.*)))/,
     BG_OPACITY: /^bg-opacity-[0-9]/,
-    BG: /bg-(?!opacity)(.*)/,
     ZINDEX: /z-(.*)/,
     CURSOR: /cursor-(.*)/
   };
