@@ -1,6 +1,6 @@
 {
   "name": "styled-wind",
-  "version": "0.0.0-beta.12",
+  "version": "0.0.0-beta.13",
   "description": "Use tailwind like classess in styled components",
   "author": "ameerthehacker",
   "license": "MIT",
