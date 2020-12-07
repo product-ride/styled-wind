@@ -1,4 +1,4 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "build",
   "sandboxes": ["styled-wind-demo-hxmsi"]
 }
