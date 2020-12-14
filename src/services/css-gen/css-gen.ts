@@ -31,7 +31,7 @@ export class CSSGen {
     inline: 'display: inline;',
     'inline-block': 'display: inline-block;',
     flex: 'display: flex;',
-    'inline-flex': 'display: inline-flex',
+    'inline-flex': 'display: inline-flex;',
     table: 'display: table-cell;',
     'table-column': 'display: table-column;',
     'table-column-group': 'display: table-column-group;',
@@ -79,7 +79,7 @@ export class CSSGen {
                 bottom: 0;
                 left: 0;`,
     'inset-y-0': `top: 0;
-                  bottom: 0`,
+                  bottom: 0;`,
     'inset-x-0': `right: 0;
                   left: 0;`,
     'inset-auto': `	top: auto;
@@ -96,8 +96,8 @@ export class CSSGen {
     'flex-grow-0': `flex-shrink: 0;`,
     'object-contain': 'object-fit: contain;',
     'object-cover': 'object-fit: cover;',
-    'object-fill': 'object-fit: fill',
-    'object-none': 'object-fit: none',
+    'object-fill': 'object-fit: fill;',
+    'object-none': 'object-fit: none;',
     'object-scale-down': 'object-fit: scale-down;',
     'object-bottom': 'object-position: bottom;',
     'object-center': 'object-position: center;',
@@ -191,9 +191,9 @@ export class CSSGen {
       'font-family: Georgia, Cambria, "Times New Roman", Times, serif;',
     'font-mono':
       'font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;',
-    'list-none': 'list-style-type: none',
-    'list-disc': 'list-style-type: disc',
-    'list-decimal': 'list-style-type: decimal',
+    'list-none': 'list-style-type: none;',
+    'list-disc': 'list-style-type: disc;',
+    'list-decimal': 'list-style-type: decimal;',
     'list-inside': 'list-style-position: inside;',
     'list-outside': 'list-style-position: outside;',
     'text-left': 'text-align: left;',
@@ -215,18 +215,11 @@ export class CSSGen {
     'resize-y': 'resize: vertical;',
     'resize-x': 'resize: horizontal;',
     resize: 'resize: both;',
-    'fill-current': 'fill: currentColor',
+    'fill-current': 'fill: currentColor;',
     'stroke-current': 'stroke: currentColor;',
-    'max-h-full': 'max-height: 100%;',
-    'max-h-screen': 'max-height: 100vh;',
-    'min-h-0': 'min-height: 0;',
-    'min-h-full': 'min-height: 100%;',
-    'min-h-screen': 'min-height: 100vh;',
-    'min-w-0': 'min-width: 0;',
-    'min-w-full': 'min-width: 100%;',
     'grid-flow-row': 'grid-auto-flow: row;',
     'grid-flow-col': 'grid-auto-flow: column;',
-    'grid-flow-row-dense': 'grid-auto-flow: row dense',
+    'grid-flow-row-dense': 'grid-auto-flow: row dense;',
     'grid-flow-col-dense': 'grid-auto-flow: column dense;',
     'table-auto': 'table-layout: auto;',
     'table-fixed': 'table-layout: fixed;'
@@ -274,7 +267,10 @@ export class CSSGen {
     LINE_HEIGHT: /^leading-(.*)/,
     OPACITY: /^opacity-[0-9]/,
     MAX_WIDTH: /^max-w-(.*)/,
+    MIN_WIDTH: /^min-w-(.*)/,
     WIDTH: /^w-(.*)/,
+    MAX_HEIGHT: /^max-h-(.*)/,
+    MIN_HEIGHT: /^min-h-(.*)/,
     HEIGHT: /^h-(.*)/,
     GRID_TEMPLATE_COLS: /^grid-cols-(.*)/,
     GRID_TEMPLATE_ROWS: /^grid-rows-(.*)/,
@@ -522,12 +518,33 @@ export class CSSGen {
 
         return `max-width: ${size};`;
       } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MIN_WIDTH)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.minWidth[breakpoint];
+
+        return `min-width: ${size};`;
+      } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.WIDTH)
       ) {
         const [, width] = styledClassName.split('-');
         const widthValue = this.config.theme.width[width];
 
         return `width: ${widthValue};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MAX_HEIGHT)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.maxHeight[breakpoint];
+
+        return `max-height: ${size};`;
+      } else if (
+        styledClassName.match(this.dynamicPropertyClassesRegEx.MIN_HEIGHT)
+      ) {
+        const [, , breakpoint] = styledClassName.split('-');
+        const size = this.config.theme.minHeight[breakpoint];
+
+        return `min-height: ${size};`;
       } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.HEIGHT)
       ) {
@@ -647,8 +664,8 @@ export class CSSGen {
             }
             case 'r': {
               return `
-                  border-top-right-radius: 0.25rem;
-                  border-bottom-right-radius: 0.25rem;
+                  border-top-right-radius: ${radiusValue};
+                  border-bottom-right-radius: ${radiusValue};
                 `;
             }
             case 'tl': {
@@ -659,6 +676,11 @@ export class CSSGen {
             case 'tr': {
               return `
                   border-top-right-radius: ${radiusValue};
+                `;
+            }
+            case 'bl': {
+              return `
+                  border-bottom-left-radius: ${radiusValue};
                 `;
             }
             case 'br': {
@@ -796,7 +818,7 @@ export class CSSGen {
   }
 
   private hydratePseudoClasses(pseudoClass: string) {
-    if (!CSSGen.isStyleWindClass(pseudoClass)) return pseudoClass;
+    if (!CSSGen.isStyleWindClass(pseudoClass)) return `${pseudoClass};`;
 
     const sm = this.config.theme.screens.sm;
     const md = this.config.theme.screens.md;

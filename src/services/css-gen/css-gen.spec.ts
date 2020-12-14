@@ -121,21 +121,46 @@ describe('CSSGen', () => {
   });
 
   it('should generate css for max width', () => {
-    const css = cssGen.genCSS(['.max-w-6xl']);
+    const css = cssGen.genCSS(['.max-w-6xl', '.max-w-max', '.max-w-7xl']);
 
-    expect(css).toMatchInlineSnapshot(`"max-width: 72rem;"`);
+    expect(css).toMatchInlineSnapshot(
+      `"max-width: 72rem;max-width: max-content;max-width: 80rem;"`
+    );
+  });
+
+  it('should generate css for min width', () => {
+    const css = cssGen.genCSS(['.min-w-full', '.min-w-min']);
+
+    expect(css).toMatchInlineSnapshot(
+      `"min-width: 100%;min-width: min-content;"`
+    );
   });
 
   it('should generate css for width', () => {
-    const css = cssGen.genCSS(['.w-10/12']);
+    const css = cssGen.genCSS(['.w-10/12', '.w-min']);
 
-    expect(css).toMatchInlineSnapshot(`"width: 83.333333%;"`);
+    expect(css).toMatchInlineSnapshot(
+      `"width: 83.333333%;width: min-content;"`
+    );
   });
 
-  it('should generate css for height', () => {
-    const css = cssGen.genCSS(['.h-10/12']);
+  it('should generate css for max height', () => {
+    const css = cssGen.genCSS(['.max-h-64', '.max-h-full']);
 
-    expect(css).toMatchInlineSnapshot(`"height: 83.333333%;"`);
+    expect(css).toMatchInlineSnapshot(`"max-height: 16rem;max-height: 100%;"`);
+  });
+
+  it('should generate css for min height', () => {
+    const css = cssGen.genCSS(['.min-h-screen', '.min-h-0']);
+
+    expect(css).toMatchInlineSnapshot(`"min-height: 100vh;min-height: 0;"`);
+  });
+  it('should generate css for height', () => {
+    const css = cssGen.genCSS(['.h-5/6', '.h-screen', '.h-3.5']);
+
+    expect(css).toMatchInlineSnapshot(
+      `"height: 83.333333%;height: 100vh;height: 0.875rem;"`
+    );
   });
 
   it('should generate css for grid-template-cols', () => {
