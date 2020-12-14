@@ -210,6 +210,11 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`"cursor: pointer;"`);
   });
 
+  it('should generate css for border-color', () => {
+    const css = cssGen.genCSS(['.border-blue-400']);
+    expect(css).toMatchInlineSnapshot(`"border-color: #63b3ed;"`);
+  });
+
   it('should generate css for border-radius without direction', () => {
     const css = cssGen.genCSS([
       '.rounded',
