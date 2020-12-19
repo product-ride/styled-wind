@@ -254,7 +254,7 @@ export class CSSGen {
     BORDER_OPACITY: /^border-opacity-[0-9]/,
     BORDER_COLOR: /^border-(?!opacity)(.*)-[0-9]/,
     BORDER_WITH_DIRECTION: /^border-(.)-[0-9]/,
-    TEXT_SIZE: /^text-(xs|sm|base|lg|[0-9]xl)$/,
+    TEXT_SIZE: /^text-(xs|sm|base|lg|xl|[2-9]xl)$/,
     TEXT_WEIGHT: /^font-(hairline|thin|light|normal|medium|semibold|bold|extrabold|black)$/,
     TEXT_OPACITY: /^text-opacity-[0-9]/,
     TEXT_COLOR: /^text-(?!opacity)(.*)/,
@@ -436,7 +436,7 @@ export class CSSGen {
       ) {
         const props = styledClassName.split('-');
 
-        // text-black, text-trasparent
+        // text-black, text-transparent
         if (props.length === 2) {
           const [textOrPlaceholder, colorString] = props;
           const colorHex = this.config.theme.colors[colorString];
