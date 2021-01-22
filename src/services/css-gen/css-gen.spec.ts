@@ -70,6 +70,12 @@ describe('CSSGen', () => {
     expect(css).toMatchInlineSnapshot(`"font-size: 4rem;"`);
   });
 
+  it('should generate css for text size xl', () => {
+    const css = cssGen.genCSS(['.text-xl']);
+
+    expect(css).toMatchInlineSnapshot(`"font-size: 1.25rem;"`);
+  });
+
   it('should generate css for text weight', () => {
     const css = cssGen.genCSS(['.font-bold']);
 
