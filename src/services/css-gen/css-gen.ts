@@ -163,6 +163,8 @@ export class CSSGen {
     'border-dotted': 'border-style: dotted;',
     'border-double': 'border-style: double;',
     'border-none': 'border-style: none;',
+    'border-transparent': 'border-color: transparent;',
+    'border-current': 'border-color: currentColor;',
     'select-none': 'user-select: none;',
     'select-text': 'user-select: text;',
     'select-all': 'user-select: all;',
@@ -501,12 +503,12 @@ export class CSSGen {
           const [, color] = props;
           const colorHex = this.config.theme.colors[color];
 
-          return `color: ${colorHex};`;
+          return `border-color: ${colorHex};`;
         } else if (props.length === 3) {
           const [, color, contrast] = props;
           const colorHex = this.config.theme.colors[color][contrast];
 
-          return `color: ${colorHex};`;
+          return `border-color: ${colorHex};`;
         }
       } else if (
         styledClassName.match(this.dynamicPropertyClassesRegEx.MAX_WIDTH)
